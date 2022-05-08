@@ -26,8 +26,9 @@ defmodule Servy.Handler do
 		|> rewrite_request
 		|> log(:request) # don't need prefix because of imported Servy.Plugins
 		|> route
-		|> decorate
+		# |> decorate
 		|> Servy.Plugins.log(:response) # another usage example
+		|> format_response
 	end
 
 	# * Routing with pages could be done this way
@@ -80,6 +81,30 @@ defmodule Servy.Handler do
 		%Conv{ conv | resp_body: "No #{path} here!", status: 404 }
 	end
 
+	@doc """
+	Decorates response based on status code
+
+	## Example
+			iex> %Servy.Conv{status: 404, resp_body: "data"} |> Servy.Handler.decorate
+			%Servy.Conv{
+				headers: %{},
+				method: "",
+				params: %{},
+				path: "",
+				query: %{},
+				resp_body: "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️",
+				status: 404
+			}
+
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 404, resp_body: "data"} |> Servy.Handler.decorate
+			iex> "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 403, resp_body: "data"} |> Servy.Handler.decorate
+			iex> "😈😈😈😈😈😈😈😈😈😈\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 200, resp_body: "data"} |> Servy.Handler.decorate
+			iex> "😘😘😘😘😘😘😘😘😘😘\\ndata\\n🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 201, resp_body: "data"} |> Servy.Handler.decorate
+			iex> "data" = resp_body
+	"""
 	def decorate(%Conv{ status: 404, resp_body: resp_body } = conv) do
 		%Conv{ conv | resp_body: "#{String.duplicate("🚫", 10)}\n#{resp_body}\n#{String.duplicate("⛔️", 10)}" }
 	end
@@ -96,10 +121,10 @@ defmodule Servy.Handler do
 
 	def format_response(%Conv{} = conv) do
 		"""
-		HTTP/1.1 #{Conv.full_status(conv)}
-		Content-Type: text/html
-		Content-Length: #{byte_size(conv.resp_body)}
-
+		HTTP/1.1 #{Conv.full_status(conv)}\r
+		Content-Type: text/html\r
+		Content-Length: #{byte_size(conv.resp_body)}\r
+		\r
 		#{conv.resp_body}
 		"""
 	end
@@ -113,14 +138,14 @@ defmodule Servy.Handler do
 end
 
 
-request = """
-GET /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
+# request = """
+# GET /bears/1 HTTP/1.1
+# Host: example.com
+# User-Agent: ExampleBrowser/1.0
+# Accept: */*
 
-"""
+# """
 
-response = Servy.Handler.handle(request)
+# response = Servy.Handler.handle(request)
 
-IO.inspect response
+# IO.inspect response

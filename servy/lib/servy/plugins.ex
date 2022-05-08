@@ -2,9 +2,20 @@ defmodule Servy.Plugins do
 	alias Servy.Conv
 
 	def log(conv, _type) do
-		IO.inspect conv
+		if Mix.env == :dev do
+			IO.inspect conv
+		end
 		conv
 	end
+
+	def track(%Conv{status: 404, path: path} = conv) do
+		if Mix.env != :test do
+			IO.puts "Warning: #{path} is nonexistent."
+		end
+		conv
+	end
+
+	def track(%Conv{} = conv), do: conv
 
 	def rewrite_path_captures(conv, %{"thing" => thing, "id" => id}) do
 		%Conv{ conv | path: "/#{thing}/#{id}" }

@@ -37,6 +37,7 @@ defmodule Servy.BearController do
     # %{ conv | status: 200, resp_body: content }
     # render(conv, "show.eex", bear: bear)
     BearView.show(item)
+    conv
   end
 
   def create(conv, %{ "type" => type, "name" => name }) do

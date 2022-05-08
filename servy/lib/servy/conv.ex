@@ -6,6 +6,7 @@ defmodule Servy.Conv do
 		path: "",
 		params: %{},
 		headers: %{},
+		query: %{},
 		resp_body: "",
 		status: nil
 
