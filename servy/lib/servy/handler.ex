@@ -28,6 +28,7 @@ defmodule Servy.Handler do
 		|> route
 		# |> decorate
 		|> Servy.Plugins.log(:response) # another usage example
+		|> format_headers
 		|> format_response
 	end
 
@@ -63,6 +64,10 @@ defmodule Servy.Handler do
 
 	def route(%Conv{method: "POST", path: "/bears"} = conv) do
 		BearController.create(conv, conv.params)
+	end
+
+	def route(%Conv{method: "GET", path: "/api/bears"} = conv) do
+		Servy.Api.BearController.index(conv)
 	end
 
 	def route(%Conv{method: "GET", path: "/bears/" <> id} = conv) do
@@ -119,11 +124,15 @@ defmodule Servy.Handler do
 
 	def decorate(%Conv{} = conv), do: conv
 
+	def format_headers(%Conv{} = conv) do
+		put_in(conv.resp_headers.content_length, byte_size(conv.resp_body))
+	end
+
 	def format_response(%Conv{} = conv) do
 		"""
 		HTTP/1.1 #{Conv.full_status(conv)}\r
-		Content-Type: text/html\r
-		Content-Length: #{byte_size(conv.resp_body)}\r
+		Content-Type: #{conv.resp_headers.content_type}\r
+		Content-Length: #{conv.resp_headers.content_length}\r
 		\r
 		#{conv.resp_body}
 		"""
