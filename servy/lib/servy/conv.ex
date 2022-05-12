@@ -1,11 +1,4 @@
-defmodule Servy.Conv.ReponseHeaders do
-	defstruct content_type: "text/html",
-	content_length: 0
-end
-
 defmodule Servy.Conv do
-	alias Servy.Conv.ReponseHeaders
-
 	@moduledoc """
 	Conversation map
 	"""
@@ -14,7 +7,10 @@ defmodule Servy.Conv do
 		params: %{},
 		headers: %{},
 		query: %{},
-		resp_headers: %ReponseHeaders{},
+		req_body: "",
+		resp_headers: %{
+			"Content-Type" => "text/html"
+		},
 		resp_body: "",
 		status: nil
 

@@ -15,6 +15,10 @@ defmodule Servy.Parser do
 
 		params = parse_params(headers["Content-Type"], params_string)
 
+		if method == "POST" do
+
+		end
+
 		%Conv{
 			method: method,
 			path: uri,
@@ -43,6 +47,10 @@ defmodule Servy.Parser do
 		params_string |> String.trim |> URI.decode_query
 	end
 
+	def parse_params("application/json", params_string) do
+		Poison.Parser.parse!(params_string, %{})
+	end
+
 	def parse_params(_, _), do: %{}
 
 	@doc """
@@ -58,7 +66,7 @@ defmodule Servy.Parser do
 	def parse_headers(headers) do
 		headers
 		|> Enum.map(&String.split(&1, ": "))
-		|> Enum.reduce(%{}, &(Map.put(&2, hd(&1), hd(tl(&1)))))
+		|> Enum.reduce(%{}, &(Map.put(&2, hd(&1), String.replace(hd(tl(&1)), "\r", ""))))
 		# |> Enum.reduce(%{}, fn (el, acc) -> Map.put(acc, List.first(el), List.last(el)) end)
 	end
 

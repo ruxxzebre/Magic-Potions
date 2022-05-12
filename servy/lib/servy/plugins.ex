@@ -1,7 +1,7 @@
 defmodule Servy.Plugins do
 	alias Servy.Conv
 
-	def log(conv, _type) do
+	def log(conv, _type \\ :true) do
 		if Mix.env == :dev do
 			IO.inspect conv
 		end
@@ -30,4 +30,42 @@ defmodule Servy.Plugins do
 	end
 
 	def rewrite_request(conv), do: conv
+
+	@doc """
+	Decorates response based on status code
+
+	## Example
+			iex> %Servy.Conv{status: 404, resp_body: "data"} |> Servy.Plugins.decorate
+			%Servy.Conv{
+				headers: %{},
+				method: "",
+				params: %{},
+				path: "",
+				query: %{},
+				resp_body: "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️",
+				status: 404
+			}
+
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 404, resp_body: "data"} |> Servy.Plugins.decorate
+			iex> "🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 403, resp_body: "data"} |> Servy.Plugins.decorate
+			iex> "😈😈😈😈😈😈😈😈😈😈\\ndata\\n⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️⛔️" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 200, resp_body: "data"} |> Servy.Plugins.decorate
+			iex> "😘😘😘😘😘😘😘😘😘😘\\ndata\\n🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰" = resp_body
+			iex> %{resp_body: resp_body} = %Servy.Conv{status: 201, resp_body: "data"} |> Servy.Plugins.decorate
+			iex> "data" = resp_body
+	"""
+	def decorate(%Conv{ status: 404, resp_body: resp_body } = conv) do
+		%Conv{ conv | resp_body: "#{String.duplicate("🚫", 10)}\n#{resp_body}\n#{String.duplicate("⛔️", 10)}" }
+	end
+
+	def decorate(%Conv{ status: 403, resp_body: resp_body } = conv) do
+		%Conv{ conv | resp_body: "#{String.duplicate("😈", 10)}\n#{resp_body}\n#{String.duplicate("⛔️", 10)}" }
+	end
+
+	def decorate(%Conv{ status: 200, resp_body: resp_body } = conv) do
+		%Conv{ conv | resp_body: "#{String.duplicate("😘", 10)}\n#{resp_body}\n#{String.duplicate("🥰", 10)}" }
+	end
+
+	def decorate(%Conv{} = conv), do: conv
 end

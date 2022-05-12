@@ -1,3 +1,6 @@
 %{
+  "earmark": {:hex, :earmark, "1.4.25", "43fd256e37f671528727745f0fc760227e16f40dced303216f766eade06b7b10", [:mix], [{:earmark_parser, "~> 1.4.25", [hex: :earmark_parser, repo: "hexpm", optional: false]}], "hexpm", "073c606ea4c3cc52920e8ae8ebe788c6af03d3e39782b25e5d14ceaa2f692998"},
+  "earmark_parser": {:hex, :earmark_parser, "1.4.25", "2024618731c55ebfcc5439d756852ec4e85978a39d0d58593763924d9a15916f", [:mix], [], "hexpm", "56749c5e1c59447f7b7a23ddb235e4b3defe276afc220a6227237f3efe83f51e"},
+  "markdown": {:hex, :still_markdown, "0.1.1", "46a7f60536bd78a30dbfa009faf286ff6c5b2aa1b05b1f1f540f6ef491cc5bf1", [:make, :mix], [], "hexpm", "74e0622866cd34e8cce3e75e4ee3b4c6b65a4ef0577828ca8deae8bdb6432248"},
   "poison": {:hex, :poison, "5.0.0", "d2b54589ab4157bbb82ec2050757779bfed724463a544b6e20d79855a9e43b24", [:mix], [{:decimal, "~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "11dc6117c501b80c62a7594f941d043982a1bd05a1184280c0d9166eb4d8d3fc"},
 }

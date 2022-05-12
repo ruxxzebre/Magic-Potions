@@ -1,16 +1,25 @@
 defmodule Servy.Wildthings do
   alias Servy.Bear
 
+  @db_path Path.expand("../../db", __DIR__)
+
   @spec list_bears :: [%Bear{}]
   def list_bears do
-    [
-      Bear.new_bear(1, "Teddy", "Brown", true),
-      Bear.new_bear(2, "Smokey", "Black"),
-      Bear.new_bear(3, "Paddington", "Brown"),
-      Bear.new_bear(4, "Scarface", "Grizzly", true),
-      Bear.new_bear(5, "Snow", "Polar"),
-      Bear.new_bear(6, "Brutus", "Grizzly")
-    ]
+    @db_path
+      |> Path.join("bears.json")
+      |> read_json
+      |> Poison.decode!(as: %{"bears" => [%Bear{}]})
+      |> Map.get("bears")
+  end
+
+  defp read_json(source) do
+    case File.read(source) do
+      {:ok, contents} ->
+        contents
+      {:error, reason} ->
+        IO.inspect "Error reading #{source}: #{reason}"
+        "[]"
+    end
   end
 
   @spec get_bear(binary | integer) :: Bear
