@@ -4,4 +4,4 @@ defmodule Servy do
   end
 end
 
-IO.puts Servy.hello "Mike"
+IO.puts(Servy.hello("Mike"))

@@ -7,18 +7,18 @@ defmodule Recurse do
 
   def loopy([], sum), do: sum
 
-  def tripple([ head | tail ]) do
+  def tripple([head | tail]) do
     [head * 3 | tripple(tail)]
   end
 
-  #? Why error when making this func private
+  # ? Why error when making this func private
   #! (CompileError) defp tripple/1 already defined as def in lib/servy/recurse.ex:10
   def tripple([]), do: []
 
   def tailTripple(list), do: tailTripple(list, [])
 
   defp tailTripple([head | tail], result) do
-    tailTripple(tail, [head*3 | result])
+    tailTripple(tail, [head * 3 | result])
   end
 
   defp tailTripple([], result), do: result |> Enum.reverse()
@@ -38,5 +38,5 @@ defmodule Recurse do
   def my_map_tail([], _func, acc), do: Enum.reverse(acc)
 end
 
-IO.inspect Recurse.tripple([1,2,3,4,5])
-IO.inspect Recurse.tailTripple([1,2,3,4,5])
+IO.inspect(Recurse.tripple([1, 2, 3, 4, 5]))
+IO.inspect(Recurse.tailTripple([1, 2, 3, 4, 5]))
