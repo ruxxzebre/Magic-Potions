@@ -1,6 +1,5 @@
 defmodule Servy.HttpServer do
-  @spec sendClientRequest(List.Chars) :: binary()
-  def sendClientRequest(data \\ 'some data') do
+  def sendClientRequest(data) do
     host = 'localhost'
 
     {:ok, sock} =

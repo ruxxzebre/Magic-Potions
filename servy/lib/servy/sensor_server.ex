@@ -1,16 +1,23 @@
 defmodule Servy.SensorServer do
   @name :sensor_server
-  use GenServer
+  use GenServer, restart: :transient
 
   defmodule State do
     defstruct sensor_data: %{},
-              refresh_interval: :timer.seconds(5)
+              refresh_interval: :timer.minutes(60)
   end
 
   # Client interface
 
   def start do
+    IO.puts("Starting the #{@name} server...")
     GenServer.start(__MODULE__, %State{}, name: @name)
+  end
+
+  def start_link(arg) do
+    IO.puts("Starting the #{@name} server with refresh interval #{arg}min...")
+    state = %State{refresh_interval: :timer.minutes(arg)}
+    GenServer.start_link(__MODULE__, state, name: @name)
   end
 
   def get_sensor_data do
@@ -54,6 +61,7 @@ defmodule Servy.SensorServer do
   end
 
   defp run_tasks_to_get_sensor_data do
+    IO.puts "Running tasks to get sensor data..."
     task = Task.async(fn -> %{x: 2, y: 9, z: 55} end)
     location = Task.await(task)
 

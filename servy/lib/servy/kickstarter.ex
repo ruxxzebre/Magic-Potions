@@ -2,8 +2,13 @@ defmodule Servy.KickStarter do
   use GenServer
 
   def start do
-    IO.puts("Starting a KickStarter")
+    IO.puts("Starting the KickStarter")
     GenServer.start(__MODULE__, :ok, name: __MODULE__)
+  end
+
+  def start_link(_arg) do
+    IO.puts("Starting the KickStarter")
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   def init(:ok) do
@@ -23,6 +28,7 @@ defmodule Servy.KickStarter do
   end
 
   defp launch_http_server do
+    IO.puts "Starting the HTTP Server..."
     server_pid = spawn_link(Servy.HttpServer, :start, [4000])
 
     # * Here KickStart process being linked to server process, because init runs inside Kickstart process

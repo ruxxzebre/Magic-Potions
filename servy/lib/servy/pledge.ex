@@ -14,8 +14,13 @@ defmodule Servy.PledgeServer do
   end
 
   def start() do
-    IO.puts("Starting the a #{@name} server...")
+    IO.puts("Starting the #{@name} server...")
     GenServer.start(__MODULE__, %State{}, name: @name)
+  end
+
+  def start_link(_arg) do
+    IO.puts("Starting the #{@name} server...")
+    GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
 
   def state(), do: GenServer.call(@name, :get_state)
