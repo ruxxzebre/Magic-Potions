@@ -14,10 +14,14 @@ defmodule Servy.Plugins do
       IO.puts("Warning: #{path} is nonexistent.")
     end
 
+    Servy.C404Counter.bump_count(path)
     conv
   end
 
-  def track(%Conv{} = conv), do: conv
+  def track(%Conv{} = conv) do
+    IO.inspect(conv)
+    conv
+  end
 
   def rewrite_path_captures(conv, %{"thing" => thing, "id" => id}) do
     %Conv{conv | path: "/#{thing}/#{id}"}

@@ -3,21 +3,27 @@ defmodule Servy.Parser do
   # * same as top example
   alias Servy.Conv
 
+  def verify({:ok, request}) do
+    try do
+      parse(request)
+      {:ok, request}
+    catch
+      _, val -> {:error, val}
+    end
+  end
+
+  def verify({_, reason}) do
+    {:error, "🚫Request error for #{reason}"}
+  end
+
   def parse(request) do
     [top, params_string] = String.split(request, "\r\n\r\n")
-
     [request_line | header_lines] = String.split(top, "\n")
-
     [method, path, _] = String.split(request_line, " ")
 
     {uri, query} = parse_query(path)
-
     headers = parse_headers(header_lines)
-
     params = parse_params(headers["Content-Type"], params_string)
-
-    if method == "POST" do
-    end
 
     %Conv{
       method: method,
@@ -49,6 +55,10 @@ defmodule Servy.Parser do
 
   def parse_params("application/json", params_string) do
     Poison.Parser.parse!(params_string, %{})
+  end
+
+  def parse_params(_, _) do
+    %{}
   end
 
   def parse_params(_, _), do: %{}

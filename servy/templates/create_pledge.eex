@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>New Pledge</title>
+	<style>
+		.form {
+			display: inline-block;
+			margin: 20px;
+			padding: 10px;
+			border: 1px solid black;
+			border-radius: 5%;
+		}
+
+		.input_field {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.input {
+			margin: 5px;
+		}
+
+		.submit_button {
+			margin: 0 auto;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="form">
+		<h2>Add new pledge</h2>
+		<p>Already pledged: </p>
+		<form method="POST" action="/pages/pledges/new">
+			<div class="input_field">
+				<label for="iname">Name: </label>
+				<input type="text" class="input" id="iname" name="name">
+			</div>
+			<div class="input_field">
+				<label for="iamount">Amount: </label>
+				<input type="text" class="input" id="iamount" name="amount">
+			</div>
+			<input type="submit" class="submit_button" value="Submit">
+		</form>
+	</div>
+</body>
+
+</html>

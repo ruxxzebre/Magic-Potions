@@ -1,0 +1,12 @@
+<h1>Sensors</h1>
+
+<div>
+X: <%= location.x %>
+Y: <%= location.y %>
+Z: <%= location.z %>
+</div>
+<ul>
+	<%= for snaps <- snapshots do %>
+		<li><%= snaps %></li>
+	<%= end %>
+</ul>

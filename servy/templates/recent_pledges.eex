@@ -1,0 +1,7 @@
+<h1>Recent pledges</h1>
+
+<div>
+<%= for { name, amount } <- recent_pledges do %>
+	<li><strong><%= name %></strong> pledged <%= amount  %></li>
+<%= end %>
+</div>

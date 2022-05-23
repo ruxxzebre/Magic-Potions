@@ -6,9 +6,9 @@ defmodule Servy.Handler do
   # so it could mess things up a little bit
   # import Servy.Plugins, only: [log: 2, rewrite_request: 2] # 2 is arity of function
   import Servy.Parser, only: [parse: 1]
-  import Servy.Plugins, only: [rewrite_request: 1]
+  import Servy.Plugins, only: [rewrite_request: 1, track: 1]
 
-  alias Servy.Plugins
+  # alias Servy.Plugins
   alias Servy.Conv
   alias Servy.BearRouter, as: WebBearRouter
   alias Servy.Api.BearRouter, as: ApiBearRouter
@@ -25,10 +25,11 @@ defmodule Servy.Handler do
     request
     |> parse
     |> rewrite_request
-    |> Plugins.log()
+    # |> Plugins.log()
     |> router
     # |> Plugins.decorate
     # |> Plugins.log
+    |> track
     |> fill_response_headers
     |> format_response
   end

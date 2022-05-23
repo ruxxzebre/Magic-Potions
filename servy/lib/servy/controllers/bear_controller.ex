@@ -3,17 +3,6 @@ defmodule Servy.BearController do
   alias Servy.Bear
   alias Servy.BearView
 
-  @template_path Path.expand("../../templates", __DIR__)
-
-  def render(conv, template, bindings \\ []) do
-    content =
-      @template_path
-      |> Path.join("show.eex")
-      |> EEx.eval_file(bindings)
-
-    conv
-  end
-
   def index(conv) do
     items =
       Wildthings.list_bears()
@@ -37,12 +26,22 @@ defmodule Servy.BearController do
 
     # %{ conv | status: 200, resp_body: content }
     # render(conv, "show.eex", bear: bear)
-    BearView.show(item)
-    conv
+    content = BearView.show(item)
+    %{conv | status: 200, resp_body: content}
   end
 
   def create(conv, %{"type" => type, "name" => name}) do
     %{conv | status: 201, resp_body: "Created a #{type} bear named #{name}!"}
+  end
+
+  def sensors(conv) do
+    %{
+      location: location,
+      snapshots: snapshots
+    } = Servy.SensorServer.get_sensor_data()
+
+    # BearView.render(conv, "sensors.eex", location: location, snapshots: snapshots)
+    %{conv | status: 200, resp_body: BearView.sensors(location, snapshots)}
   end
 
   def delete(conv, _params) do

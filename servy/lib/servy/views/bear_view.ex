@@ -7,6 +7,11 @@ defmodule Servy.BearView do
 
   EEx.function_from_file(:def, :show, Path.join(@templates_path, "show.eex"), [:bear])
 
+  EEx.function_from_file(:def, :sensors, Path.join(@templates_path, "sensors.eex"), [
+    :location,
+    :snapshots
+  ])
+
   # * bindings \\ [] - means default value of an argument is [] (empty list)
   def render(conv, template, bindings \\ []) do
     content =
