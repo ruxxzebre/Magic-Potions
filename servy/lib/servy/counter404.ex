@@ -1,9 +1,13 @@
 defmodule Servy.C404Counter do
   use GenServer
 
-  @name :nfRoutesCounter
+  @name :nf_routes_counter
 
   def start, do: GenServer.start(__MODULE__, %{}, name: @name)
+  def start_link(_arg) do
+    IO.puts("Starting the 404 counter service...")
+    GenServer.start_link(__MODULE__, %{}, name: @name)
+  end
 
   def init(state) do
     {:ok, state}
