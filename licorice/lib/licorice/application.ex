@@ -6,10 +6,11 @@ defmodule Licorice.Application do
   use Application
 
   @impl true
-  def start(_type, _args) do
+  def start(_type, _opts) do
     children = [
       # Starts a worker by calling: Licorice.Worker.start_link(arg)
       # {Licorice.Worker, arg}
+      {Plug.Cowboy, scheme: :http, plug: Licorice.Router.Main, options: [port: 4000]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

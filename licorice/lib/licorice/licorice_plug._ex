@@ -1,0 +1,29 @@
+defmodule Licorice.Plug do
+  import Plug.Conn
+
+  def init(options) do
+    # init opts
+    options
+  end
+
+  # def call(%Plug.Conn{path_info: ["lexer" | other]} = conn, _opts) do
+  #   content =
+  #     "requested lexer" <>
+  #       if length(other) > 0 do
+  #         " with additional paths"
+  #       else
+  #         ""
+  #       end
+
+  #   conn |> send_resp(200, content)
+  # end
+
+  # @spec call(Plug.Conn.t(), Plug.opts()) :: Plug.Conn.t()
+  # def call(conn, _opts) do
+  #   IO.inspect(conn)
+
+  #   conn
+  #   |> put_resp_content_type("text/plain")
+  #   |> send_resp(200, "Hello World")
+  # end
+end
