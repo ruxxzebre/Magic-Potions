@@ -14,8 +14,9 @@ defmodule Licorice.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Licorice.Application, [port: 4000]}
+      extra_applications: [:logger, :crypto],
+      mod: {Licorice.Application, []},
+      env: [port: 4000]
     ]
   end
 
@@ -25,7 +26,9 @@ defmodule Licorice.MixProject do
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:plug_cowboy, "~> 2.0"},
-      {:jason, "~> 1.3"}
+      {:jason, "~> 1.3"},
+      {:uuid, "~> 1.1"},
+      {:poison, "~> 5.0"}
     ]
   end
 end

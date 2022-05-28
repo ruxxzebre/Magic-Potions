@@ -12,4 +12,8 @@ defmodule Licorice.View do
 
     send_resp(conn, (status || 200), body)
   end
+
+  def render_json(conn, status \\ 200, content) when is_map(content) do
+    send_resp(conn, status, Poison.encode!(content))
+  end
 end

@@ -5,27 +5,20 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <%# <script src="https://unpkg.com/petite-vue" defer init>
-    </script> %>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Chatting</title>
+  <script src="https://unpkg.com/petite-vue" defer init></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Chatting</title>
 </head>
 
 <body>
-  <div id="root" v-scope hidden="true">
+  <template id="root">
     <section class="section">
       <div class="container">
         <h1 class="title">
-          Chat
+          Chat {{ store.username }}
         </h1>
         <p class="subtitle">
           Establish secure connection now
-        <div v-if="state.username">
-          Username: {{ state.username }}
-        </div>
-        <div v-if="state.subject">
-          Subject: {{state.subject}}
-        </div>
         </p>
       </div>
     </section>
@@ -34,7 +27,7 @@
       <div class="field">
         <label class="label">Username</label>
         <div class="control has-icons-left has-icons-right">
-          <input class="input is-success" type="text" placeholder="Text input" v-model="state.username">
+          <input class="input is-success" type="text" placeholder="Text input" value="bulma">
           <span class="icon is-small is-left">
             <i class="fas fa-user"></i>
           </span>
@@ -43,13 +36,12 @@
           </span>
         </div>
         <p class="help is-success">This username is available</p>
-        <p class="help is-danger">This username already registered</p>
       </div>
 
       <div class="field">
         <label class="label">Subject</label>
         <div class="control has-icons-left has-icons-right">
-          <input v-model="state.subject" class="input is-success" type="text" placeholder="Text input">
+          <input v-model="data.username" class="input is-success" type="text" placeholder="Text input">
           <span class="icon is-small is-left">
             <i class="fas fa-user"></i>
           </span>
@@ -58,7 +50,6 @@
           </span>
         </div>
         <p class="help is-success">This subject exists</p>
-        <p class="help is-danger">This subject does not exist</p>
       </div>
 
       <div class="field">
@@ -85,29 +76,57 @@
 
       <div class="field is-grouped">
         <div class="control">
-          <button @submit="" class="button is-link">Start</button>
+          <button @submit="" class="button is-link">Send</button>
         </div>
         <div class="control">
           <button class="button is-link is-light">Cancel</button>
         </div>
       </div>
     </div>
+  </template>
+  <template id="example">
+    {{store.count}}
+    <button class="button" @click="store.increment">
+      Increment
+    </button>
+  </template>
+  <div v-scope="runApp()"></div>
+  <div v-scope="exampleFunc()"></div>
+  <div v-scope="{count: 0}">
+    {{count}}
+    <button @click="count++" class="button">inc</button>
   </div>
 </body>
 <script type="module">
   import { createApp, reactive } from "https://unpkg.com/petite-vue?module";
 
-  const state = reactive({
+  const store = reactive({
     count: 0,
+    increment() {
+      this.count += 1;
+    },
     username: "",
-    subject: ""
+    subject: "",
+    message: "",
   });
 
-  createApp({
-    state
-  }).mount();
+  function runApp() {
+    return {
+      $template: "#root"
+    }
+  }
 
-  document.getElementById("root").hidden = false;
+  function exampleFunc() {
+    return {
+      $template: "#example"
+    }
+  }
+
+  PetiteVue.createApp({
+    exampleFunc,
+    runApp,
+    store
+  }).mount()
 </script>
 
 </html>
