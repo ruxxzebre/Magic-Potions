@@ -21,6 +21,8 @@ defmodule Licorice.Application do
       {Plug.Cowboy, scheme: :http, plug: Licorice.Router.Main, options: [port: port]}
     ]
 
+    Licorice.ETC.new_table()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Licorice.Supervisor]

@@ -1,3 +1,19 @@
+defmodule Licorice.Sessionz do
+  @behaviour Plug.Session.Store
+
+  def init(opts) do
+    max_age = Keyword.get(opts, :store_max_age, 3600)
+
+    %{max_age: max_age}
+  end
+
+  def get(conn, cookie, _opts)
+    when cookie == ""
+    when cookie == nil do
+      {nil, %{}}
+  end
+end
+
 defmodule Licorice.SessionServer do
   use GenServer
   require Logger

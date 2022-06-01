@@ -1,0 +1,1 @@
+setTimeout(() => alert(666), 1500)

@@ -1,44 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-	<title>Register</title>
-</head>
+<%= head %>
 
 <body>
 	<div id="root" v-scope hidden="true">
-		<div class="section container" style="width: 600px">
-			<h1 class="title">
-				Register
-				<br>
-			</h1>
-			<span v-if="state.submitted">
-				Thank you for registration. Your username is "{{state.username}}". You will be redirected to login page.
-			</span>
-			<div class="field">
-				<label class="label">Username</label>
-				<div class="control">
-					<input class="input" v-model="state.username" :disabled="state.submitted" type="text"
-						placeholder="your username">
+		<%= navbar %>
+			<div class="section container" style="width: 600px">
+				<h1 class="title">
+					Sign Up
+					<br>
+				</h1>
+				<span v-if="state.submitted">
+					Thank you for registration. Your username is "{{state.username}}". You will be redirected to login page.
+				</span>
+				<div class="field">
+					<label class="label">Username</label>
+					<div class="control">
+						<input class="input" v-model="state.username" :disabled="state.submitted" type="text"
+							placeholder="your username">
+					</div>
+					<p class="help is-danger" v-if="state.errors.username">This username already exists</p>
+					<!-- <p class="help is-success">This subject does not exist</p> -->
 				</div>
-				<p class="help is-danger" v-if="state.errors.username">This username already exists</p>
-				<!-- <p class="help is-success">This subject does not exist</p> -->
-			</div>
-			<div class="field">
-				<label class="label">Password</label>
-				<div class="control">
-					<input class="input" :disabled="state.submitted" v-model="state.password" type="password"
-						placeholder="your password">
+				<div class="field">
+					<label class="label">Password</label>
+					<div class="control">
+						<input class="input" :disabled="state.submitted" v-model="state.password" type="password"
+							placeholder="your password">
+					</div>
+				</div>
+				<div class="field">
+					<button @click="submit" class="button is-primary" :disabled="state.submitted">GO</button>
 				</div>
 			</div>
-			<div class="field">
-				<button @click="submit" class="button is-primary" :disabled="state.submitted">GO</button>
-			</div>
-		</div>
 	</div>
 </body>
 <script type="module">

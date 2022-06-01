@@ -1,0 +1,10 @@
+<%= head %>
+
+<body>
+	<%= navbar %>
+	<div class="section container" style="width: 600px">
+
+	</div>
+</body>
+
+</html>

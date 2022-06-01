@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <%# <script src="https://unpkg.com/petite-vue" defer init>
-    </script> %>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Chatting</title>
-</head>
+<%= head %>
 
 <body>
   <div id="root" v-scope hidden="true">
+    <%= navbar %>
     <section class="section">
       <div class="container">
         <h1 class="title">

@@ -6,39 +6,102 @@ defmodule Licorice.Router.Main do
   import Plug.Conn
   alias Licorice.UsersStore
 
-  @url Application.get_env(:licorice, :url)
-
+  # plug(Plug.Session, store: :ets, key: "sid", table: :session)
+  plug(
+    Plug.Session,
+    store: :cookie,
+    key: "_my_app_session",
+    encryption_salt: "cookie store encryption salt",
+    signing_salt: "cookie store signing salt",
+    key_length: 64,
+    log: :debug
+  )
   plug(
     Plug.Parsers,
     parsers: [:json],
     pass: ["text/*"],
     json_decoder: Jason
   )
+  plug :put_secret_key_base
+
+  plug Plug.Static,
+  from: {:licorice, "licorice/templates"},
+  at: "/public"
+
   plug(Plug.Logger)
   plug(:match)
   plug(:dispatch)
+
+  def put_secret_key_base(conn, _) do
+    put_in(conn.secret_key_base, "LONGSTRING")
+  end
 
   get "/hello" do
     send_resp(conn, 200, "world")
   end
 
   get "/login" do
-    Licorice.View.render(conn, "login.html", [url: @url])
+    conn = fetch_cookies(conn)
+    if Map.get(conn.cookies, "supersecretchat") != nil do
+      conn |> resp(:found, "") |> put_resp_header(
+        "location",
+        "http://localhost:4000"
+      )
+    else
+      Licorice.View.render(conn, "login.html", [])
+    end
+  end
+
+  get "/cookie" do
+    conn =
+      fetch_cookies(conn, signed: ~w(supersecretchat))
+      |> put_resp_cookie("cooked#{:rand.uniform(100)}", "#{:rand.uniform(1000)}", sign: true)
+
+    conn |> send_resp(200, "DULL")
   end
 
   get "/register" do
-    Licorice.View.render(conn, "register.html", [url: @url])
+    conn = fetch_cookies(conn, signed: ~w(supersecretchat))
+    # val = Map.get(conn.cookies, "supersecretchat")
+    IO.inspect(conn)
+    Licorice.View.render(conn, "register.html", [])
   end
 
   get "/api/" do
     send_resp(conn, 200, "api route...")
   end
 
-  get "/api/users/login" do
+  get "/testurl" do
+    conn |> Plug.Conn.resp(:found, "") |> Plug.Conn.put_resp_header("location", "https://www.google.com")
+  end
+
+  post "/api/users/login" do
     %{
       "name" => name, "pass" => pass,
     } = conn.body_params
-    send_resp(conn, 200, "logged in...")
+    user = %UsersStore.User{name: name, hashed_password: pass}
+
+    conn = fetch_cookies(conn, signed: ~w(supersecretchat))
+
+    if Map.get(conn.cookies, "supersecretchat") != nil do
+      conn |> resp(:found, "") |> put_resp_header(
+        "location",
+        "https://www.google.com"
+      )
+    end
+    # |> put_resp_cookie("supersecretchat", %{name: name, pass: pass}, sign: true)
+
+
+
+    # case UsersStore.get_user(user) do
+    #   {:ok, _} ->
+    #     conn
+    #   {:error, reason} ->
+    #     conn
+    #   _ -> conn
+    # end |> Licorice.View.render_json(%{ok: true})
+
+    # ! REDIRECT
   end
 
   post "/api/users/register" do

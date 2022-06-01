@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-	<title>Log In</title>
-</head>
+<%= head %>
 
 <body>
 	<div id="root" v-scope hidden="true">
+		<%= navbar %>
 		<div class="section container" style="width: 600px">
 			<h1 class="title">
-				Login
+				Log In
 				<br>
 			</h1>
 			<span v-if="state.submitted">
@@ -25,7 +17,7 @@
 					<input class="input" v-model="state.username" :disabled="state.submitted" type="text"
 						placeholder="your username">
 				</div>
-				<p class="help is-danger" v-if="state.errors.username">This username already exists</p>
+				<p class="help is-danger" v-if="state.errors.username">{{state.errors.username}}</p>
 				<!-- <p class="help is-success">This subject does not exist</p> -->
 			</div>
 			<div class="field">
@@ -43,44 +35,44 @@
 </body>
 <script type="module">
 	import { createApp, reactive } from "https://unpkg.com/petite-vue?module";
-	import ky from "https://unpkg.com/ky@0.30.0/distribution/index.js";
+		import ky from "https://unpkg.com/ky@0.30.0/distribution/index.js";
 
-	const state = reactive({
-		username: "",
-		password: "",
-		errors: {},
-		submitted: false,
-	});
+		const state = reactive({
+			username: "",
+			password: "",
+			errors: {},
+			submitted: false,
+		});
 
-	createApp({
-		state,
-		handleUsernameChange() {
-			state.submitted = false;
-		},
-		async submit() {
-			const response = await ky.post("<%= url %>/api/users/register", {
-				json: {
-					name: state.username,
-					pass: state.password
+		createApp({
+			state,
+			handleUsernameChange() {
+				state.submitted = false;
+			},
+			async submit() {
+				const response = await ky.post("<%= url %>/api/users/login", {
+					json: {
+						name: state.username,
+						pass: state.password
+					}
+				}).catch(err => err.message);
+
+				if (!response.ok) {
+					state.errors.username = (`Fetch error: ${response.statusText}`);
+				} else {
+					console.log(await response.json())
+					state.submitted = true;
+					state.errors = {};
+					setTimeout(() => {
+						window.location.replace("<%= url %>/login")
+					}, 2500);
 				}
-			}).catch(err => err.message);
 
-			if (!response.ok) {
-				state.errors.username = (`Fetch error: ${response.statusText}`);
-			} else {
-				console.log(await response.json())
-				state.submitted = true;
-				state.errors = {};
-				setTimeout(() => {
-					window.location.replace("<%= url %>/login")
-				}, 2500);
-			}
+				console.log(response);
+			},
+		}).mount();
 
-			console.log(response);
-		},
-	}).mount();
-
-	document.getElementById("root").hidden = false;
-</script>
+		document.getElementById("root").hidden = false;
+	</script>
 
 </html>
