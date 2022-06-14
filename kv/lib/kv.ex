@@ -1,6 +1,6 @@
 defmodule KV do
   @moduledoc """
-  Documentation for `KV`.
+  Key-Value database implemented using Elixir & OTP
   """
 
   @doc """

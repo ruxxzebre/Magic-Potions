@@ -17,10 +17,14 @@ defmodule Licorice.ViewComponents do
   end
 
   def render(opts, :navbar) do
-    IO.puts "PUTTTZ _opts"
-    IO.inspect opts
-    EEx.eval_file(@components[:navbar], url: Helpers.get_url(),
-    logged_in: false)
+    IO.puts("PUTTTZ _opts")
+    IO.inspect(opts)
+
+    EEx.eval_file(
+      @components[:navbar],
+      url: Helpers.get_url(),
+      logged_in: false
+    )
   end
 
   def render(_opts, :head) do
