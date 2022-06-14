@@ -1,10 +1,12 @@
 # Postgecto
 
-**TODO: Add description**
+## Description
+
+Practice of using PostgreSQL and Ecto.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+If [available in Hex](https://hex.pm/docs/publish) (spoiler: it's not), the package can be installed
 by adding `postgecto` to your list of dependencies in `mix.exs`:
 
 ```elixir

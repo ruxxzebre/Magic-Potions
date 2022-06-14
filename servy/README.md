@@ -1,6 +1,8 @@
 # Servy
 
-**TODO: Add description**
+## Description
+
+Project which consist of many elixir and mix features.
 
 ## Installation
 

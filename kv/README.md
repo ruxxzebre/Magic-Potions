@@ -1,6 +1,8 @@
 # KV
 
-**TODO: Add description**
+## Description
+
+Simple key-value db. Created by following `Mix and OTP` book.
 
 ## Installation
 

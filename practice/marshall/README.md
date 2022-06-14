@@ -1,5 +1,10 @@
 # Marshall
 
+
+## Description
+
+Practice of creating own service using Phoenix.
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
