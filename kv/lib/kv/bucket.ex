@@ -1,5 +1,6 @@
 defmodule KV.Bucket do
   use Agent, restart: :temporary
+
   @doc """
   Starts a new bucket.
   """
@@ -35,8 +36,7 @@ defmodule KV.Bucket do
   defp delete_key(key), do: fn map -> Map.pop(map, key) end
 end
 
-
-defmodule KV.Bucket.Gen do
+defmodule KV.Bucket.GenServerVersion do
   use GenServer
 
   @doc """

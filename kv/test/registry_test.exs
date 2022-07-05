@@ -1,11 +1,11 @@
 defmodule KV.RegistryTest do
   use ExUnit.Case, async: true
 
-  setup do
+  setup context do
     # * start_supervised! creates a new supervised process for each test
     # * and guarantees that it'll be killed afterwards
-    registry = start_supervised!(KV.Registry)
-    %{registry: registry}
+    _ = start_supervised!({KV.Registry, name: context.test})
+    %{registry: context.test}
   end
 
   test "spawn buckets", %{registry: registry} do
@@ -20,6 +20,8 @@ defmodule KV.RegistryTest do
     KV.Registry.create(registry, "shopping")
     {:ok, bucket} = KV.Registry.lookup(registry, "shopping")
     Agent.stop(bucket)
+    # Waiting for handle_info to process bucket's death
+    _ = KV.Registry.create(registry, "bogus")
     assert KV.Registry.lookup(registry, "shopping") == :error
   end
 
@@ -28,6 +30,7 @@ defmodule KV.RegistryTest do
     KV.Registry.create(registry, "cats")
     {:ok, bucket} = KV.Registry.lookup(registry, "shopping")
     Agent.stop(bucket)
+    _ = KV.Registry.create(registry, "bogus")
     assert KV.Registry.lookup(registry, "shopping") == :error
     assert KV.Registry.lookup(registry, "cats") != :error
   end
@@ -35,7 +38,8 @@ defmodule KV.RegistryTest do
   test "removes bucket on crash", %{registry: registry} do
     KV.Registry.create(registry, "shopping")
     {:ok, bucket} = KV.Registry.lookup(registry, "shopping")
-    Agent.stop(bucket, :shutdown)
+    # Agent.stop(bucket, :shutdown)
+    _ = KV.Registry.create(registry, "bogus")
     assert KV.Registry.lookup(registry, "shopping") == :error
   end
 end
