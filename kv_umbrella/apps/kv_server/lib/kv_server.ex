@@ -58,6 +58,11 @@ defmodule KVServer do
     :gen_tcp.recv(socket, 0)
   end
 
+  defp write_line(socket, {:ok, :quit}) do
+    :gen_tcp.send(socket, "OK\r\nBYE!!!\r\n")
+    :gen_tcp.close(socket)
+  end
+
   defp write_line(socket, {:ok, text}) do
     :gen_tcp.send(socket, text)
   end

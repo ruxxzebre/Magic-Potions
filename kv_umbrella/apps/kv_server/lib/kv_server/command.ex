@@ -1,4 +1,5 @@
 defmodule KVServer.Command do
+  require Logger
 
   # * The ~S prevents the \r\n characters from being converted to a carriage return
   # * and line feed until they are evaluated in the test.
@@ -38,6 +39,8 @@ defmodule KVServer.Command do
       ["GET", bucket, key] -> {:ok, {:get, bucket, key}}
       ["PUT", bucket, key, value] -> {:ok, {:put, bucket, key, value}}
       ["DELETE", bucket, key] -> {:ok, {:delete, bucket, key}}
+      ["HELP"] -> {:ok, {:help}}
+      ["QUIT"] -> {:ok, {:quit}}
       _ -> {:error, :unknown_command}
     end
   end
@@ -48,7 +51,8 @@ defmodule KVServer.Command do
   def run(command, server_pid)
 
   def run({:create, bucket}, server_pid) do
-    KV.Registry.create(server_pid, bucket)
+    pid = KV.Registry.create(server_pid, bucket)
+    Logger.info("Created bucket #{bucket} with pid #{inspect pid}");
     {:ok, "OK\r\n"}
   end
 
@@ -64,6 +68,7 @@ defmodule KVServer.Command do
   def run({:put, bucket, key, value}, server_pid) do
     lookup(bucket, fn pid ->
       KV.Bucket.put(pid, key, value)
+      Logger.info("Put #{key} = #{value} in bucket #{bucket}")
       {:ok, "OK\r\n"}
     end, server_pid)
   end
@@ -71,14 +76,34 @@ defmodule KVServer.Command do
   def run({:delete, bucket, key}, server_pid) do
     lookup(bucket, fn pid ->
       KV.Bucket.delete(pid, key)
+      Logger.info("Deleted #{key} from bucket #{bucket}")
       {:ok, "OK\r\n"}
     end, server_pid)
+  end
+
+  def run({:help}, _server_pid) do
+    commands = [
+      "CREATE <bucket>",
+      "GET <bucket> <key>",
+      "PUT <bucket> <key> <value>",
+      "DELETE <bucket> <key>",
+      "HELP",
+      "QUIT"
+    ]
+    msg = commands |> Enum.map(&("    " <> &1)) |> Enum.join("\r\n")
+    {:ok, "COMMANDS:\r\n" <> msg <> "\r\nOK\r\n"}
+  end
+
+  def run({:quit}, _server_pid) do
+    {:ok, :quit}
   end
 
   defp lookup(bucket, callback, server_pid) do
     case KV.Registry.lookup(server_pid, bucket) do
       {:ok, pid} -> callback.(pid)
-      :error -> {:error, :not_found}
+      :error ->
+        Logger.error("Bucket #{bucket} not found, or server pid/name #{server_pid} is invalid")
+        {:error, :not_found}
     end
   end
 end
