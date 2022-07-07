@@ -1,5 +1,6 @@
 defmodule KVServerTest do
   use ExUnit.Case
+  @moduletag :capture_log
 
   setup do
     Application.stop(:kv)
@@ -17,6 +18,7 @@ defmodule KVServerTest do
     %{socket: socket}
   end
 
+  @tag :capture_log
   test "server interaction", %{socket: socket} do
     assert send_and_recv(socket, "UNKNOWN shopping\r\n") == "UNKNOWN COMMAND\r\n"
     assert send_and_recv(socket, "GET shopping eggs\r\n") == "NOT FOUND\r\n"
