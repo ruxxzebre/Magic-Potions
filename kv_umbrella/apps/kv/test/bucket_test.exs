@@ -18,7 +18,7 @@ defmodule KV.BucketTest do
     assert KV.Bucket.get(bucket, "milk") == nil
   end
 
-  test "are temporary workers", %{bucket: bucket} do
+  test "are temporary workers", %{bucket: _bucket} do
     assert Supervisor.child_spec(KV.Bucket, []).restart == :temporary
   end
 end
