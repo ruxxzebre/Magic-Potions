@@ -12,7 +12,8 @@ defmodule KV.Supervisor do
       # ALso, tests are using BucketSupervisor as shared state, here it's not that important
       # but should be kept in mind.
       {DynamicSupervisor, name: KV.BucketSupervisor, strategy: :one_for_one},
-      {KV.Registry, name: KV.Registry}
+      {KV.Registry, name: KV.Registry},
+      {Task.Supervisor, name: KV.RouterTasks}
     ]
 
     Supervisor.init(children, strategy: :one_for_all)
