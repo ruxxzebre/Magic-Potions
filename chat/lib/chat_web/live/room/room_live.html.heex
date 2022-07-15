@@ -7,15 +7,22 @@ as <strong><%= @username %></strong>
 	<div id="chat-messages" phx-update="append">
 		<%= for message <- @messages do %>
 		<span {[id: message.uuid]}>
-			<p><i><%= message.username %> : </i><%= message.text %></p>
+			<%= display_message(message) %>
 		</span>
 		<% end %>
 	</div>
 
-	<%= f = form_for :chat, "#", id: "chat-form", 
+	<div id="user-list">
+		<h3>Users online</h3>
+		<%= for user <- @user_list do %>
+			<p><%= user %></p>
+		<% end %>
+	</div>
+</div>
+
+	<%= f = form_for :chat, "#", id: "chat-form",
 	phx_submit: :submit_message,
 	phx_change: :form_updated %>
-		<%= text_input f, :message, 
+		<%= text_input f, :message,
 		placeholder: "Enter your message...",
 		value: @message %>
-</div>
