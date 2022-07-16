@@ -42,6 +42,7 @@ defmodule ChatWeb.RoomLive do
         },
         socket
       ) do
+
     join_messages =
       joins
       |> Map.keys()
@@ -69,17 +70,10 @@ defmodule ChatWeb.RoomLive do
   @impl true
   def handle_event("form_updated", %{"chat" => %{"message" => message}}, socket) do
     {:noreply, assign(socket, message: message)}
-    # cond do
-    #   String.length(message) < 3 ->
-    #     {:noreply, assign(socket, errors: %{message: "Message must be at least 3 characters long"})}
-    #   true ->
-    # end
   end
 
   @impl true
-  def handle_event("submit_message", %{"chat" => %{"message" => message}}, socket) when byte_size(message) >= 2 do
-    Logger.info(message)
-
+  def handle_event("submit_message", %{"chat" => %{"message" => message}}, socket) when byte_size(message) >= 1 do
     ChatWeb.Endpoint.broadcast(
       socket.assigns.topic,
       "new-message",
@@ -95,7 +89,7 @@ defmodule ChatWeb.RoomLive do
 
   @impl true
   def handle_event("submit_message", _payload, socket) do
-    {:noreply, assign(socket, errors: %{message: "Message must be at least 2 characters long"})}
+    {:noreply, assign(socket, errors: %{message: "Message must be at least 1 character long"})}
   end
 
   def display_message(%{type: :system, text: text}) do
