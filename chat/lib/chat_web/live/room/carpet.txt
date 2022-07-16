@@ -1,0 +1,6 @@
+<%= f = form_for :chat, "#", id: "chat-form",
+phx_submit: :submit_message,
+phx_change: :form_updated %>
+	<%= text_input f, :message,
+	placeholder: "Enter your message...",
+	value: @message %>

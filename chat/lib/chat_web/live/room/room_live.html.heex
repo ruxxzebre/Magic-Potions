@@ -20,9 +20,8 @@ as <strong><%= @username %></strong>
 	</div>
 </div>
 
-	<%= f = form_for :chat, "#", id: "chat-form",
-	phx_submit: :submit_message,
-	phx_change: :form_updated %>
-		<%= text_input f, :message,
-		placeholder: "Enter your message...",
-		value: @message %>
+<.form let={f} for={:chat} phx-change="form_updated" phx-submit="submit_message">
+	<%= text_input f, :message,
+	placeholder: "Enter your message...",
+	value: @message %>
+</.form>
