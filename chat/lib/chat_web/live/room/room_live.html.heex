@@ -3,25 +3,34 @@
 as <strong><%= @username %></strong>
 </p>
 
-<div id="chat-container">
-	<div id="chat-messages" phx-update="append">
-		<%= for message <- @messages do %>
-		<span {[id: message.uuid]}>
-			<%= display_message(message) %>
-		</span>
-		<% end %>
+<div class="chat-wrapper">
+	<div id="chat-container">
+		<div id="chat-messages" phx-update="prepend">
+			<%= for message <- @messages do %>
+			<span {[id: message.uuid]}>
+				<%= display_message(message) %>
+			</span>
+			<% end %>
+		</div>
+
+		<div id="user-list">
+			<h3>Users online</h3>
+			<%= for user <- @user_list do %>
+				<p><%= user %></p>
+			<% end %>
+		</div>
 	</div>
 
-	<div id="user-list">
-		<h3>Users online</h3>
-		<%= for user <- @user_list do %>
-			<p><%= user %></p>
-		<% end %>
-	</div>
+	<.form let={f} for={:chat} phx-change="form_updated" phx-submit="submit_message">
+		<%= text_input f, :message,
+		id: "chat-input",
+		placeholder: "Enter your message...",
+		value: @message %>
+		<span class="error_message"><%= 
+			case Map.fetch(@errors, :message) do
+				{:ok, error} -> error
+				_ -> ""
+			end
+		%></span>
+	</.form>
 </div>
-
-<.form let={f} for={:chat} phx-change="form_updated" phx-submit="submit_message">
-	<%= text_input f, :message,
-	placeholder: "Enter your message...",
-	value: @message %>
-</.form>

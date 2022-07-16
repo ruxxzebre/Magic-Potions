@@ -1,17 +1,19 @@
 #chat-container {
 	display: flex;
-	/* flex-direction: column; */
 	justify-content: space-between;
-	height: 500px;
+	height: 450px;
 }
 
 #chat-messages {
-	overflow-x: hidden;
-	overflow-y: auto;
+	display: flex;
+	flex-direction: column-reverse;
+	overflow: auto;
+
+	width: 600px;
 
 	flex-grow: 1;
 
-	margin: -1em 1em 1em -1em;
+	margin-right: 1em;
 	border: 1px solid greenyellow;
 	padding: 1em;
 }
@@ -19,4 +21,17 @@
 #chat-messages p {
 	padding: 0;
 	margin: 0;
+}
+
+.chat-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+#chat-input {
+	margin-top: 1em;
+}
+
+.error_message {
+	color: red;
 }

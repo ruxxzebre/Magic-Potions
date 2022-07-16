@@ -19,6 +19,7 @@ defmodule ChatWeb.RoomLive do
        message: "",
        user_list: [],
        username: username,
+       errors: %{},
        messages: [
          %{
            uuid: UUID.uuid4(),
@@ -68,10 +69,15 @@ defmodule ChatWeb.RoomLive do
   @impl true
   def handle_event("form_updated", %{"chat" => %{"message" => message}}, socket) do
     {:noreply, assign(socket, message: message)}
+    # cond do
+    #   String.length(message) < 3 ->
+    #     {:noreply, assign(socket, errors: %{message: "Message must be at least 3 characters long"})}
+    #   true ->
+    # end
   end
 
   @impl true
-  def handle_event("submit_message", %{"chat" => %{"message" => message}}, socket) do
+  def handle_event("submit_message", %{"chat" => %{"message" => message}}, socket) when byte_size(message) >= 2 do
     Logger.info(message)
 
     ChatWeb.Endpoint.broadcast(
@@ -84,7 +90,12 @@ defmodule ChatWeb.RoomLive do
       }
     )
 
-    {:noreply, assign(socket, message: "")}
+    {:noreply, assign(socket, message: "", errors: %{})}
+  end
+
+  @impl true
+  def handle_event("submit_message", _payload, socket) do
+    {:noreply, assign(socket, errors: %{message: "Message must be at least 2 characters long"})}
   end
 
   def display_message(%{type: :system, text: text}) do
