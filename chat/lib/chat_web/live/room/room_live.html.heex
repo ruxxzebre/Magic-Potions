@@ -1,11 +1,15 @@
-<p>Currently chatting in 
+<p class="fs-3">Currently chatting in 
 <strong><%= @room_id %></strong>
 as <strong><%= @username %></strong>
 </p>
 
-<div class="chat-wrapper">
-	<div id="chat-container">
-		<div id="chat-messages" phx-update="prepend">
+<div class="chat-wrapper container">
+	<div id="chat-container" class="container-sm">
+		<div 
+		id="chat-messages" 
+		class="border border-primary rounded fs-4"
+		phx-update="prepend"
+		>
 			<%= for message <- @messages do %>
 			<span {[id: message.uuid]}>
 				<%= display_message(message) %>
@@ -13,24 +17,34 @@ as <strong><%= @username %></strong>
 			<% end %>
 		</div>
 
-		<div id="user-list">
-			<h3>Users online</h3>
-			<%= for user <- @user_list do %>
-				<p><%= user %></p>
-			<% end %>
-		</div>
+			<.form let={f} for={:chat} phx-change="form_updated" phx-submit="submit_message">
+					<div class="input-group mt-3">
+						<span class="input-group-text" id="inputGroup-sizing-default">Default</span>
+						<%= text_input f, :message,
+						class: "form-control",
+						placeholder: "Enter your message...",
+						value: @message,
+						autocomplete: "off"
+						%>
+						<button 
+						class="btn btn-outline-primary" 
+						type="button">Send</button>
+					</div>
+					<span class="error_message"><%= 
+						case Map.fetch(@errors, :message) do
+							{:ok, error} -> error
+							_ -> ""
+						end
+					%></span>
+				</.form>
 	</div>
 
-	<.form let={f} for={:chat} phx-change="form_updated" phx-submit="submit_message">
-		<%= text_input f, :message,
-		id: "chat-input",
-		placeholder: "Enter your message...",
-		value: @message %>
-		<span class="error_message"><%= 
-			case Map.fetch(@errors, :message) do
-				{:ok, error} -> error
-				_ -> ""
-			end
-		%></span>
-	</.form>
+	<div class="fs-3">
+		<span class="title">Users online</span>
+		<ul>
+			<%= for user <- @user_list do %>
+				<li><%= user %></li>
+			<% end %>
+		</ul>
+	</div>
 </div>
