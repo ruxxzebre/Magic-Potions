@@ -16,3 +16,11 @@ import Config
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+
+computer_name = "Rootnecks-MacBook-Pro"
+
+config :kv,
+  routing_table: [
+    {?a..?m, :"foo@#{computer_name}"},
+    {?n..?z, :"bar@#{computer_name}"}
+  ]

@@ -1,0 +1,3 @@
+%{
+  "dotenv": {:hex, :dotenv, "3.1.0", "d5a76bb17dc28acfb5236655bbe5776a1ffbdc8d3589fc992de0882b3ae4bc10", [:mix], [], "hexpm", "01bed84d21bedd8739aebad16489a3ce12d19c2d59af87377da65ebb361980d3"},
+}
