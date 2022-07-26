@@ -9,10 +9,51 @@
 # move said applications out of the umbrella.
 import Config
 
-# Sample configuration:
+# Configure Mix tasks and generators
+config :saturday,
+  ecto_repos: [Saturday.Repo]
+
+# Configures the mailer
 #
-#     config :logger, :console,
-#       level: :info,
-#       format: "$date $time [$level] $metadata$message\n",
-#       metadata: [:user_id]
+# By default it uses the "Local" adapter which stores the emails
+# locally. You can see the emails in your browser, at "/dev/mailbox".
 #
+# For production it's recommended to configure a different adapter
+# at the `config/runtime.exs`.
+config :saturday, Saturday.Mailer, adapter: Swoosh.Adapters.Local
+
+# Swoosh API client is needed for adapters other than SMTP.
+config :swoosh, :api_client, false
+
+config :saturday_web,
+  ecto_repos: [Saturday.Repo],
+  generators: [context_app: :saturday]
+
+# Configures the endpoint
+config :saturday_web, SaturdayWeb.Endpoint,
+  url: [host: "localhost"],
+  render_errors: [view: SaturdayWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: Saturday.PubSub,
+  live_view: [signing_salt: "F+GgYMlJ"]
+
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.14.29",
+  default: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../apps/saturday_web/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{config_env()}.exs"
