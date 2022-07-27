@@ -18,6 +18,8 @@ defmodule SaturdayWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    live "/booking", BookingLive
+    live "/demo", DemoLive
   end
 
   # Other scopes may use custom stacks.

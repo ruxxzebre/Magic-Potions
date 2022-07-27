@@ -40,7 +40,8 @@ defmodule Saturday.MixProject do
       {:ecto_sql, "~> 3.6"},
       {:ecto_sqlite3, ">= 0.0.0"},
       {:jason, "~> 1.2"},
-      {:swoosh, "~> 1.3"}
+      {:swoosh, "~> 1.3"},
+      {:timex, "~> 3.7"}
     ]
   end
 
