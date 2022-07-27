@@ -1,0 +1,35 @@
+<div>
+  <button
+    phx-click="open"
+    phx-target="#modal-one"
+    type="button"
+    class="mr-8 btn btn-primary">
+    Open modal one
+  </button>
+  <button
+    phx-click="open"
+    phx-target="#modal-two"
+    type="button"
+    class="btn btn-primary">
+    Open modal two
+  </button>
+</div>
+
+<button phx-click="toggle">RUN</button>
+
+<div class="modal <%= if @opened, do: "is-active", else: "" %>">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <p class="image is-4by3">
+      <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">
+    </p>
+  </div>
+  <button class="modal-close is-large" phx-click="toggle" aria-label="close"></button>
+</div>
+
+<%= live_component SaturdayWeb.Components.Modal, id: "modal-one", title: "Modal one title" do %>
+  MODAL ONE
+<% end %>
+<%= live_component SaturdayWeb.Components.Modal, id: "modal-two", title: "Modal two title" do %>
+  MODAL TWO
+<% end %>
