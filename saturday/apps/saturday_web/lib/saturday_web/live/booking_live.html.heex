@@ -22,16 +22,21 @@
         <div class="card-content">
           <div class="media">
             <div class="media-content has-text-centered">
-              <%= for {{_, %{range: range, localized_date: localized_date}}, _} <- Enum.with_index(@filtered_range) do %>
-                <div class="columns" style="margin-bottom: 45px">
+              <%= for {{date, %{range: range, localized_date: localized_date}}, _} <- Enum.with_index(@filtered_range) do %>
+                <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
                   <div class="column is-one-third has-text-weight-medium"><%= localized_date %> </div>
                   <%= #index %>
                   <div class="column" 
                   >
                     <%# style={"position: absolute; top: #{index*100}px; height: 50%"} %>
                     <%= for entry <- range do %>
-                      <div class="is-inline-block">
-                        <button class={"button #{if entry.booked, do: "is-light", else: "gay"}"}
+                      <%= # "! FIX THIS (convert to string with year, month, day, hour, minute)" %>
+                      <div 
+                      phx-click="apply-to-entry"
+                      phx-value-datetime={Schedule.date_to_spec(entry.date)}
+                      id={"date-entry-#{entry.date}"} 
+                      class="is-inline-block">
+                        <button class={"button #{if entry.booked, do: "is-light", else: ""}"}
                         disabled={entry.booked}
                         ><%= Schedule.format_time(entry.date) %></button>
                       </div>
