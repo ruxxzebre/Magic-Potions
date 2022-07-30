@@ -23,7 +23,7 @@ defmodule SaturdayWeb.MixProject do
   def application do
     [
       mod: {SaturdayWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 

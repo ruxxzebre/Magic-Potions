@@ -10,6 +10,7 @@ defmodule Saturday.Application do
     children = [
       # Start the Ecto repository
       Saturday.Repo,
+      Saturday.Queue, # Should be initialized after Ecto (Sqturday.Repo), because module depends on it
       # Start the PubSub system
       {Phoenix.PubSub, name: Saturday.PubSub}
       # Start a worker by calling: Saturday.Worker.start_link(arg)
