@@ -19,10 +19,16 @@ defmodule Saturday.Schedule.Range do
 end
 
 defmodule Saturday.Schedule do
+  @moduledoc """
+  Schedule range management.
+  Used for generation and processing of date ranges from and to certain date,
+  as well as from and to certain hour:minute.
+  """
+
   alias Timex.Translator
   alias Saturday.Schedule.Filters
-  alias Saturday.Schedule.Range
-  alias Saturday.Schedule.RangeItem
+  # alias Saturday.Schedule.Range
+  # alias Saturday.Schedule.RangeItem
 
   def format_date!(date) when is_binary(date) do
     format_date!(Timex.parse!(date, "{YYYY}-{0M}-{D}"))
@@ -63,19 +69,19 @@ defmodule Saturday.Schedule do
   def format_range(range) do
     range
     |> Enum.reduce(%{}, fn elem, acc ->
-      fom = Timex.format!(elem.date, "{YYYY}-{0M}-{D}")
+      fom = Timex.format!(elem.date, "{YYYY}-{0M}-{0D}")
       Map.put(acc, fom, Map.get(acc, fom, []) ++ [elem])
     end)
     |> Enum.map(fn {date, range} ->
-      parsed = Timex.parse!(date, "{YYYY}-{0M}-{D}")
+      parsed = Timex.parse!(date, "{YYYY}-{0M}-{0D}")
 
       {date,
        %{
          range: range,
          localized_date: format_date!(date),
          date_forms: [
-           Timex.format!(parsed, "{YYYY}.{0M}.{D}"),
-           Timex.format!(parsed, "{D}.{0M}.{YYYY}")
+           Timex.format!(parsed, "{YYYY}.{0M}.{0D}"),
+           Timex.format!(parsed, "{0D}.{0M}.{YYYY}")
          ]
        }}
     end)
@@ -100,6 +106,9 @@ defmodule Saturday.Schedule do
 
       {date, data}
     end)
+    |> Enum.filter(fn {_, %{range: range}} ->
+      length(range) > 0
+    end)
   end
 
   @spec comp_dates(%DateTime{}, %DateTime{}) :: boolean()
@@ -112,10 +121,21 @@ defmodule Saturday.Schedule do
     && d1.minute() == d2.minute()
   end
 
+  @doc """
+  Get generated range of dates starting from `from` till `to`.
+  """
+  @spec get_range(%DateTime{}, %DateTime{}) :: binary()
+  def get_range(from, to) do
+  end
+
+  @doc """
+  Get generated range of dates starting from now.
+  """
+  @spec get_range() :: binary()
   def get_range do
     # shifted = get_shifted_dates(100);
 
-    generate_range()
+    generate_range_new()
     |> Filters.filter_weekends()
     |> format_range()
     # |> filter_shifted(shifted)
@@ -172,16 +192,48 @@ defmodule Saturday.Schedule do
     end
   end
 
-  def generate_range() do
-    generate_range(Timex.set(Timex.local(), hour: 9, minute: 0, second: 0))
+  def generate_range_new() do
+    # generate_range(Timex.set(Timex.local(), hour: 9, minute: 0, second: 0))
+    from = DateTime.new!(~D[2022-08-01], ~T[08:26:08.003], "Europe/Kiev")
+    to = DateTime.new!(~D[2022-08-20], ~T[08:26:08.003], "Europe/Kiev")
+
+    generate_range_from_to(from, to)
   end
 
-  @spec generate_range_min_max(%DateTime{}, %DateTime{}) :: []
-  defp generate_range_min_max(min, max) do
-    IO.inspect(min)
-    IO.inspect(max)
-    []
-    # raise "Not implemented."
+  # TODO: start_day_at_time for precisity
+  @start_day_at_hour 9
+  @end_day_at_hour 18
+
+  @spec generate_range_from_to(%DateTime{}, %DateTime{}) :: []
+  defp generate_range_from_to(%DateTime{} = from, to) do
+    days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
+    hours_amount = @end_day_at_hour - @start_day_at_hour
+
+    # TODO: optimize with recursion
+    return = for day <- 0..days_amount do
+      date = from |> Timex.set(hour: @start_day_at_hour, minute: 0) |> Timex.shift(days: day)
+      for hour <- 0..hours_amount do
+        date = Timex.shift(date, hours: hour)
+        for minute <- 0..@entries_per_hour - 1 do
+          %{
+            date: Timex.shift(date, minutes: minute * @interval),
+            booked: false
+          }
+        end
+      end
+    end
+    |> List.flatten()
+    # |> sort_range()
+
+    return
+  end
+
+  defp sort_range(range) do
+    # range
+    # |> Enum.sort(&(Date.compare(&1.date, &2.date) != :lt))
+    # |> Enum.sort(&(DateTime.compare(&1.date, &2.date) != :gt))
+
+    raise "Not implemented"
   end
 
   def generate_range(relative_to_date) do
