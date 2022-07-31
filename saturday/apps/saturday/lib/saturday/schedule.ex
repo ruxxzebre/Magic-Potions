@@ -205,7 +205,7 @@ defmodule Saturday.Schedule do
   @end_day_at_hour 18
 
   @spec generate_range_from_to(%DateTime{}, %DateTime{}) :: []
-  defp generate_range_from_to(%DateTime{} = from, to) do
+  defp generate_range_from_to(from, to) do
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
     hours_amount = @end_day_at_hour - @start_day_at_hour
 
