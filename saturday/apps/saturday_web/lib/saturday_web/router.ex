@@ -19,7 +19,7 @@ defmodule SaturdayWeb.Router do
 
     get "/", PageController, :index
     live "/booking", BookingLive
-    live "/demo", DemoLive
+    # live "/demo", DemoLive
   end
 
   # Other scopes may use custom stacks.

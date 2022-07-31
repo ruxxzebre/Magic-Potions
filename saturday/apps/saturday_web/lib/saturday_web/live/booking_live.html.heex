@@ -1,18 +1,11 @@
-<section class="hero is-info is-bold">
-  <div class="hero-body">
-    <div class="container has-text-centered">
-      <h1 class="title">Some faculty</h1>
-    </div>
-  </div>
-</section>
 <div class="container">
-  <section class="articles">
-    <div class="column is-8 is-offset-2">
+  <section>
+    <div class="column">
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
-            <label class="label">Фільтр</label>
-            <input class="input" name="search-query" type="text" placeholder="Пошук по даті">
+            <label class="title is-size-2">Фільтр</label>
+            <input class="input is-size-3" name="search-query" type="text" placeholder="Пошук по даті">
           </div>
         </div>
       </form>
