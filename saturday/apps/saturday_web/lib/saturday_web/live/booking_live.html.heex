@@ -22,7 +22,7 @@
         <div class="card-content">
           <div class="media">
             <div class="media-content has-text-centered">
-              <%= for {{date, %{range: range, localized_date: localized_date}}, _} <- Enum.with_index(@filtered_range) do %>
+              <%= for {date, %{range: range, localized_date: localized_date}} <- @filtered_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
                   <div class="column is-one-third has-text-weight-medium"><%= localized_date %> </div>
                   <%= #index %>
