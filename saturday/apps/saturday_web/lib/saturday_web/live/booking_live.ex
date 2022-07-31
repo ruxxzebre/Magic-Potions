@@ -7,15 +7,6 @@ defmodule SaturdayWeb.BookingLive do
   def mount(_params, session, socket) do
     if connected?(socket), do: Queue.subscribe()
 
-    # TODO: make use of session token
-    IO.inspect(session)
-    # IO.inspect(date_range |> Enum.map(fn {date, _} -> date end))
-
-    # Queue.blow_up()
-    # IO.inspect(Queue.state())
-    # Queue.blow_up()
-    # IO.inspect(Queue.state())
-    # TODO: try this Process.send_after()
     socket = assign_initials(socket)
     {:ok, socket}
   end
