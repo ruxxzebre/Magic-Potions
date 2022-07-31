@@ -6,7 +6,6 @@
   </div>
 </section>
 <div class="container">
-  <!-- START ARTICLE FEED -->
   <section class="articles">
     <div class="column is-8 is-offset-2">
       <form phx-change="update-query" phx-debounce="150">
@@ -17,7 +16,6 @@
           </div>
         </div>
       </form>
-      <!-- START ARTICLE -->
       <div class="card article">
         <div class="card-content">
           <div class="media">
@@ -28,9 +26,7 @@
                   <%= #index %>
                   <div class="column" 
                   >
-                    <%# style={"position: absolute; top: #{index*100}px; height: 50%"} %>
                     <%= for entry <- range do %>
-                      <%= # "! FIX THIS (convert to string with year, month, day, hour, minute)" %>
                       <div 
                       phx-click="apply-to-entry"
                       phx-value-datetime={Schedule.date_to_spec(entry.date)}
@@ -41,13 +37,14 @@
                         ><%= Schedule.format_time(entry.date) %></button>
                       </div>
                     <% end %>
-                    <div class="box has-background-light has-text-weight-normal">Розгорнути</div>
+                    <%# <div class="box has-background-light has-text-weight-normal">Розгорнути</div> %>
                   </div>
                 </div>
+                <hr>
               <% end %>
             </div>
           </div>
-          <div class="content article-body">
+          <%# <div class="content article-body">
             <p>Non arcu risus quis varius quam quisque. Dictum varius duis at consectetur lorem. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper. </p>
             <p>Metus aliquam eleifend mi in nulla posuere sollicitudin aliquam ultrices. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit. Accumsan lacus vel facilisis volutpat. Non sodales neque sodales ut etiam.
               Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus.</p>
@@ -56,7 +53,7 @@
               <pre>level-item</pre>
               Voluptat ut farmacium tellus in metus vulputate. Feugiat in fermentum posuere urna nec. Pharetra convallis posuere morbi leo urna molestie.
               Accumsan lacus vel facilisis volutpat est velit egestas. Fermentum leo vel orci porta. Faucibus interdum posuere lorem ipsum.</p>
-          </div>
+          </div> %>
         </div>
       </div>
     </div>

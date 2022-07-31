@@ -5,8 +5,7 @@ defmodule Saturday.Entries.Entry do
   schema "entries" do
     field :agent_name, :string
     field :agent_phone, :string
-    field :booking_date, :date
-    field :created_at, :date
+    field :booking_date, :string
     field :misc, :string
 
     timestamps()

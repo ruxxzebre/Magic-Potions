@@ -5,6 +5,7 @@ defmodule SaturdayWeb.BookingLive do
   alias Saturday.Queue
 
   def mount(_params, session, socket) do
+    IO.inspect(session)
     if connected?(socket), do: Queue.subscribe()
 
     socket = assign_initials(socket)
@@ -39,7 +40,7 @@ defmodule SaturdayWeb.BookingLive do
     {:noreply, socket}
   end
 
-  def handle_info({:applied_entries_updated, _}, %{assigns: assigns} = socket) do
+  def handle_info(:applied_entries_updated, %{assigns: assigns} = socket) do
     applied_entries = Queue.applied_entries()
 
     filtered_range =

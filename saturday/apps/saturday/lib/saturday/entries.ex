@@ -21,6 +21,21 @@ defmodule Saturday.Entries do
     Repo.all(Entry)
   end
 
+  def list_entries(:only_dates, opts \\ []) do
+    query = from(
+      e in Entry,
+      select: e.booking_date
+    )
+
+    list = Repo.all(query)
+    cond do
+      :parse_spec in opts ->
+        list
+        |> Enum.map(&Saturday.Schedule.date_from_spec/1)
+      true -> list
+    end
+  end
+
   @doc """
   Gets a single entry.
 
