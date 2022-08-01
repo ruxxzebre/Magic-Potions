@@ -14,27 +14,23 @@ defmodule SaturdayWeb.BookingLive do
   end
 
   def assign_initials(socket) do
-    applied_entries = Queue.applied_entries()
-    date_range = MemStorage.get_range()
-    filtered_range = Schedule.filter_range(date_range, "", applied_entries)
+    send(self(), :fetch_entry_range)
 
-    socket |>
-      assign(
-        search_q: "",
-        filtered_range: filtered_range,
-        applied_entries: applied_entries,
-        temporary_assigns: [filtered_range: []],
-        current_datetime: nil
-      )
+    socket
+      |> assign(
+          search_q: "",
+          date_range: [],
+          temporary_assigns: [date_range: []],
+          current_datetime: nil
+        )
+      |> start_loading()
   end
 
-  def handle_event("update-query", %{"search-query" => q}, %{ assigns: assigns } = socket) do
-    filtered_range =
-      MemStorage.get_range()
-      |> Schedule.filter_range(q, assigns.applied_entries)
+  def handle_event("update-query", %{"search-query" => q}, socket) do
+    send(self(), {:fetch_entry_range, q})
 
-    socket = assign(socket, search_q: q, filtered_range: filtered_range)
-    {:noreply, socket}
+    socket = assign(socket, search_q: q)
+    {:noreply, start_loading(socket)}
   end
 
   def handle_event("apply-to-entry", %{"datetime" => datetime}, socket) do
@@ -73,15 +69,38 @@ defmodule SaturdayWeb.BookingLive do
     {:noreply, socket}
   end
 
-  def handle_info(:applied_entries_updated, socket) do
-    applied_entries = Queue.applied_entries()
-
-    filtered_range =
+  def handle_info(:fetch_entry_range, socket) do
+    date_range =
       MemStorage.get_range()
-      |> Schedule.filter_range("", applied_entries)
+      |> Schedule.filter_range("", Queue.applied_entries())
 
-    socket = assign(socket, filtered_range: filtered_range, applied_entries: applied_entries)
-    {:noreply, socket}
+    socket = assign(socket, date_range: date_range)
+
+    {:noreply, stop_loading(socket)}
+  end
+
+  def handle_info({:fetch_entry_range, query}, socket) do
+    date_range =
+      MemStorage.get_range()
+      |> Schedule.filter_range(query, Queue.applied_entries())
+
+    socket = assign(socket, date_range: date_range)
+
+    {:noreply, stop_loading(socket)}
+  end
+
+  def handle_info(:applied_entries_updated, socket) do
+    send(self(), :fetch_entry_range)
+
+    {:noreply, start_loading(socket)}
+  end
+
+  def start_loading(socket), do: set_loading(socket, true)
+  def stop_loading(socket), do: set_loading(socket, false)
+
+  def set_loading(socket, is_loading) do
+    socket
+    |> assign(loading: is_loading)
   end
 
   def render_entry_button(assigns) do

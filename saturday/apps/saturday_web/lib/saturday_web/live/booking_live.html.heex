@@ -4,6 +4,11 @@
     datetime={@current_datetime}
     datetime_exists={@current_datetime != nil && @current_datetime != ""}
   />
+  <%= if @loading do %>
+    <div class="container is-max-widescreen">
+      <h2>Завантаження...</h2>
+    </div>
+  <% else %>
   <section>
     <div class="column">
       <form phx-change="update-query" phx-debounce="150">
@@ -18,7 +23,7 @@
         <div class="card-content">
           <div class="media">
             <div class="media-content has-text-centered">
-              <%= for {date, %{range: range, localized_date: localized_date}} <- @filtered_range do %>
+              <%= for {date, %{range: range, localized_date: localized_date}} <- @date_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
                   <div class="column is-one-third has-text-weight-medium"><%= localized_date %> </div>
                   <div class="column" 
@@ -49,4 +54,5 @@
       </div>
     </div>
   </section>
+  <% end %>
 </div>
