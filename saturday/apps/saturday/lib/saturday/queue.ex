@@ -24,12 +24,29 @@ defmodule Saturday.Queue do
   end
 
   @impl true
-  def handle_call({:apply_to_entry, date}, from, state) do
+  def handle_call({:apply_to_entry, date}, from, state) when is_binary(date) do
     IO.inspect(from)
     state = Map.update!(state, :applied_entries, fn entries -> [date | entries] end)
     broadcast(:applied_entries_updated)
 
     {:reply, {:ok}, state}
+  end
+
+  @impl true
+  def handle_call({:apply_to_entry, map}, _from, state) do
+    case Entries.create_entry(map) do
+      {:error, _} ->
+        # changeset.errors
+        # example:
+        # errors: [booking_date: {"can't be blank", [validation: :required]}],
+        {:reply, {:error}, state}
+      {:ok, entry} ->
+        date = entry.booking_date
+        state = Map.update!(state, :applied_entries, fn entries -> [date | entries] end)
+        # broadcast({:applied_entries_updated, date})
+        broadcast(:applied_entries_updated)
+        {:reply, {:ok}, state}
+    end
   end
 
   @impl true
