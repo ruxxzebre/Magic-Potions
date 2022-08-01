@@ -1,6 +1,46 @@
 defmodule Saturday.XLSX.Report do
   require Elixlsx
   alias Elixlsx.{Sheet, Workbook}
+  alias Saturday.Entries
+
+  @column_names ["ПІБ", "Телефон", "Пошта", "Зареєстровано на дату","Створено запис"]
+  @columns ["A", "B", "C", "D", "E"]
+
+  def set_sheet_columns, do:
+    set_sheet_columns(Sheet.with_name("Entries"))
+
+  def set_sheet_columns(sheet) do
+    @column_names
+    |> Enum.with_index()
+    |> Enum.reduce(sheet, fn {column_name, index}, sheet ->
+      sheet
+      |> Sheet.set_cell(
+        "#{Enum.at(@columns, index)}#{index + 1}",
+        column_name
+      )
+    end)
+  end
+
+  def set_sheet_rows(sheet) do
+    Entries.list_entries()
+    |> Enum.with_index()
+    |> Enum.reduce(sheet, fn {entry, index}, sheet ->
+      i = index + 1
+
+      sheet
+      |> Sheet.set_cell("A#{i}", entry.agent_name)
+      |> Sheet.set_cell("B#{i}", entry.agent_phone)
+      |> Sheet.set_cell("C#{i}", entry.misc) # TODO
+      |> Sheet.set_cell("D#{i}", entry.inserted_at)
+      |> Sheet.set_cell("D#{i}", entry.booking_date)
+    end)
+  end
+
+  def create_report do
+    sheet =
+      set_sheet_columns()
+      |> set_sheet_rows()
+  end
 
   def new_sheet() do
     sheet1 =
