@@ -1,4 +1,9 @@
 <div class="container">
+  <.live_component module={SaturdayWeb.ModalComponent} 
+    id="create-entry-modal"
+    datetime={@current_datetime}
+    datetime_exists={@current_datetime != nil && @current_datetime != ""}
+  />
   <section>
     <div class="column">
       <form phx-change="update-query" phx-debounce="150">
@@ -16,19 +21,12 @@
               <%= for {date, %{range: range, localized_date: localized_date}} <- @filtered_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
                   <div class="column is-one-third has-text-weight-medium"><%= localized_date %> </div>
-                  <%= #index %>
                   <div class="column" 
                   >
                     <%= for entry <- range do %>
-                      <div 
-                      phx-click="apply-to-entry"
-                      phx-value-datetime={Schedule.date_to_spec(entry.date)}
-                      id={"date-entry-#{entry.date}"} 
-                      class="is-inline-block">
-                        <button class={"button #{if entry.booked, do: "is-light", else: ""}"}
-                        disabled={entry.booked}
-                        ><%= Schedule.format_time(entry.date) %></button>
-                      </div>
+                      <%= live_patch render_entry_button(%{entry: entry}),
+                      to: Routes.live_path(@socket, SaturdayWeb.BookingLive, datetime: Schedule.date_to_spec(entry.date)) 
+                      %>
                     <% end %>
                     <%# <div class="box has-background-light has-text-weight-normal">Розгорнути</div> %>
                   </div>

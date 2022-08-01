@@ -1,25 +1,50 @@
 export const InitModal = {
-  mounted() {
-    const handleOpenCloseEvent = event => {
-      if (event.detail.open === false) {
-        this.el.removeEventListener("modal-change", handleOpenCloseEvent)
+  initEventHandlers() {
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+      const modal = $trigger.dataset.target;
+      const $target = document.getElementById(modal);
+  
+      $trigger.addEventListener('click', () => {
+        this.openModal($target);
+      });
+    });
 
-        setTimeout(() => {
-          // This timeout gives time for the animation to complete
-          this.pushEventTo(event.detail.id, "close", {})
-        }, 300);
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+      const $target = $close.closest('.modal');
+  
+      $close.addEventListener('click', () => {
+        this.closeModal($target);
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const e = event || window.event;
+  
+      if (e.keyCode === 27) { // Escape key
+        this.closeAllModals();
       }
-    }
+    });
+  },
+  openModal($el) {
+    if ($el.childElementCount > 0)
+      $el.classList.add('is-active');
+  },
+  closeModal($el) {
+    $el.classList.remove('is-active');
+    this.pushEvent("close-modal");
+  },
+  closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      this.closeModal($modal);
+    });
+  },
+  mounted() {
+    // U know, just in case
+    this.closeAllModals = this.closeAllModals.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.initEventHandlers = this.initEventHandlers.bind(this);
 
-    // This listens to modal event from AlpineJs
-    this.el.addEventListener("modal-change", handleOpenCloseEvent)
-
-    // This is the close event that comes from the LiveView
-    this.handleEvent('close', data => {
-      if (!document.getElementById(data.id)) return
-
-      const event = new CustomEvent('close-now')
-      this.el.dispatchEvent(event)
-    })
+    this.initEventHandlers();
   }
 }

@@ -18,6 +18,41 @@ defmodule Saturday.Schedule.Range do
   defstruct [:date, date_forms: [""], localized_date: "", range: []]
 end
 
+defmodule Saturday.Schedule.MemStorage do
+  require Logger
+  use GenServer
+
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+  end
+
+  def init(:ok) do
+    {:ok, %{range: Saturday.Schedule.get_range_obscure()}}
+  end
+
+  def handle_call(:get_simplified_range, _from, state) do
+    {:reply, state.range, state}
+  end
+
+  def handle_call(:get_range, _from, state) do
+    Logger.info("Fetching range...")
+    state = case state.range do
+      [] ->
+        Logger.info("Cache is empty. Generating a new one...")
+        Map.put(state, :range, Saturday.Schedule.get_range_obscure())
+      _ ->
+        Logger.info("Range is cached. Retrieving...")
+        state
+    end
+
+    {:reply, state.range, state}
+  end
+
+  def get_range() do
+    GenServer.call(__MODULE__, :get_range)
+  end
+end
+
 defmodule Saturday.Schedule do
   @moduledoc """
   Schedule range management.
@@ -31,7 +66,15 @@ defmodule Saturday.Schedule do
   # alias Saturday.Schedule.RangeItem
 
   def format_date!(date) when is_binary(date) do
-    format_date!(Timex.parse!(date, "{YYYY}-{0M}-{D}"))
+    case Timex.parse(date, "{YYYY}-{0M}-{D}") do
+      {:error, _} -> format_date!(date_from_spec(date))
+      {:ok, date} -> format_date!(date)
+    end
+    # with {:ok, date} <- Timex.parse!(date, "{YYYY}-{OM}-{D}"),
+
+    # do
+
+    # end
   end
 
   def format_date!(date) do
@@ -126,6 +169,7 @@ defmodule Saturday.Schedule do
   """
   @spec get_range(%DateTime{}, %DateTime{}) :: binary()
   def get_range(from, to) do
+    raise "Not implemented"
   end
 
   @doc """
@@ -140,6 +184,8 @@ defmodule Saturday.Schedule do
     |> format_range()
     # |> filter_shifted(shifted)
   end
+
+  def get_range_obscure, do: get_range()
 
   def filter_shifted(range, shifted) do
     range |> Enum.map(fn {rdate, rval} ->
@@ -261,6 +307,12 @@ defmodule Saturday.Schedule do
   # defp traverse_date_spec([date | time]) do
   #
   # end
+
+  @spec_regex ~r/((\w{2})\.(\w{2})\.(\w{4})\-(\w{2})\.\w{2})/
+
+  def validate_spec_date(date_spec) do
+    String.match?(date_spec, @spec_regex)
+  end
 
   def date_from_spec(date_spec) do
     date_spec
