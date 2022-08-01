@@ -1,25 +1,28 @@
-defmodule SaturdayWeb.Components.Modal do
-  use SaturdayWeb, :live_component
+defmodule SaturdayWeb.ModalComponent do
+  use Phoenix.LiveComponent
 
-  @impl true
-  def mount(socket) do
-    {:ok, assign(socket, state: "CLOSED")}
-  end
+  alias Saturday.Schedule
 
-  @impl true
-  def update(assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)}
-  end
-
-  @impl true
-  def handle_event("open", _, socket) do
-    {:noreply, assign(socket, :state, "OPEN")}
-  end
-
-  @impl true
-  def handle_event("close", _, socket) do
-    {:noreply, assign(socket, :state, "CLOSED")}
+  def render(assigns) do
+    ~H"""
+    <div id={@id} class={"modal#{if @datetime_exists, do: " is-active", else: ""}"} phx-hook="InitModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+    <header class="modal-card-head">
+      <%= if @datetime_exists do %>
+        <p class="modal-card-title">Запис на <%= Schedule.format_date!(@datetime) %></p>
+      <% end %>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <.live_component module={SaturdayWeb.ApplyingFormComponent} id="applying-form-component" />
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success">Save changes</button>
+      <button class="button">Cancel</button>
+    </footer>
+    </div>
+    </div>
+    """
   end
 end

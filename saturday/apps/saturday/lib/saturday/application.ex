@@ -13,6 +13,7 @@ defmodule Saturday.Application do
       # Start the Queue agent.
       # Should be initialized after Ecto (Sqturday.Repo), 'cause module depends on it
       Saturday.Queue,
+      Saturday.Schedule.MemStorage,
       # Start the PubSub system
       {Phoenix.PubSub, name: Saturday.PubSub}
       # Start a worker by calling: Saturday.Worker.start_link(arg)
