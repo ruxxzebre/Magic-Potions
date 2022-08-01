@@ -2,12 +2,23 @@ defmodule Saturday.Umbrella.MixProject do
   use Mix.Project
 
   def project do
+    version = "0.1.0"
+
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: version,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: [
+        production: [
+          version: version,
+          applications: [
+            saturday: :permanent,
+            saturday_web: :permanent
+          ]
+        ]
+      ]
     ]
   end
 
