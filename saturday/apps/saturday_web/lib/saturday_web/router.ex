@@ -18,6 +18,7 @@ defmodule SaturdayWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/management", ManagementController, :index
     live "/booking", BookingLive
     # live "/demo", DemoLive
   end
