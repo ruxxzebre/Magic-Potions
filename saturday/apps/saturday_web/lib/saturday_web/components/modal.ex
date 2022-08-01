@@ -5,7 +5,11 @@ defmodule SaturdayWeb.ModalComponent do
 
   def render(assigns) do
     ~H"""
-    <div id={@id} class={"modal#{if @datetime_exists, do: " is-active", else: ""}"} phx-hook="InitModal">
+    <div
+      id={@id}
+      class={"modal#{if @datetime_exists, do: " is-active", else: ""}"}
+      phx-hook="InitModal"
+    >
     <div class="modal-background"></div>
     <div class="modal-card">
     <header class="modal-card-head">
@@ -14,13 +18,13 @@ defmodule SaturdayWeb.ModalComponent do
       <% end %>
       <button class="delete" aria-label="close"></button>
     </header>
-    <section class="modal-card-body">
-      <.live_component module={SaturdayWeb.ApplyingFormComponent} id="applying-form-component" />
-    </section>
-    <footer class="modal-card-foot">
-      <button class="button is-success">Save changes</button>
-      <button class="button">Cancel</button>
-    </footer>
+    <%= if @datetime_exists do %>
+      <section class="modal-card-body">
+        <.live_component module={SaturdayWeb.ApplyingFormComponent}
+        datetime={@datetime}
+        id="applying-form-component" />
+      </section>
+    <% end %>
     </div>
     </div>
     """

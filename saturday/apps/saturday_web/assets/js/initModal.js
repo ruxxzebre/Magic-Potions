@@ -40,11 +40,25 @@ export const InitModal = {
   },
   mounted() {
     // U know, just in case
-    this.closeAllModals = this.closeAllModals.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.initEventHandlers = this.initEventHandlers.bind(this);
+    // this.closeAllModals = this.closeAllModals.bind(this);
+    // this.openModal = this.openModal.bind(this);
+    // this.closeModal = this.closeModal.bind(this);
+    // this.initEventHandlers = this.initEventHandlers.bind(this);
 
-    this.initEventHandlers();
+    // this.initEventHandlers();
+
+    const self = this;
+    (
+      document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') 
+      || []
+    ).forEach(($close) => {
+      // const $target = $close.closest('.modal');
+  
+      $close.addEventListener('click', () => {
+        console.log("CLICK");
+        // this.closeModal($target);
+        self.pushEvent("close-modal");
+      });
+    })
   }
 }

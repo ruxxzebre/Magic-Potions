@@ -14,7 +14,7 @@ defmodule Saturday.Entries.Entry do
   @doc false
   def changeset(entry, attrs) do
     entry
-    |> cast(attrs, [:booking_date, :agent_name, :agent_phone, :created_at, :misc])
-    |> validate_required([:booking_date, :agent_name, :agent_phone, :created_at, :misc])
+    |> cast(attrs, [:booking_date, :agent_name, :agent_phone, :misc])
+    |> validate_required([:booking_date, :agent_name, :agent_phone, :misc])
   end
 end

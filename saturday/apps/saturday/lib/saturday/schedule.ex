@@ -71,9 +71,7 @@ defmodule Saturday.Schedule do
       {:ok, date} -> format_date!(date)
     end
     # with {:ok, date} <- Timex.parse!(date, "{YYYY}-{OM}-{D}"),
-
     # do
-
     # end
   end
 

@@ -45,6 +45,9 @@ defmodule SaturdayWeb.BookingLive do
           socket,
           SaturdayWeb.BookingLive
         ))
+    socket =
+      socket
+      |> assign(current_datetime: "")
     {:noreply, socket}
   end
 
@@ -66,6 +69,17 @@ defmodule SaturdayWeb.BookingLive do
       true -> socket
     end
 
+    {:noreply, socket}
+  end
+
+
+  def handle_info(:close_modal, socket) do
+    socket =
+      push_patch(socket,
+        to: Routes.live_path(
+          socket,
+          SaturdayWeb.BookingLive
+        ))
     {:noreply, socket}
   end
 
