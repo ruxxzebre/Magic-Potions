@@ -10,11 +10,10 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :saturday_web, SaturdayWeb.Endpoint,
-  # url: [host: "example.com", port: 80],
-  url: [host: System.get_env("HOST_URL") ||
-  raise "Please specify HOST_URL", port: 80],
+  url: [host: System.get_env("HOST_URL") || raise "Please specify HOST_URL", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
+# url: [host: "example.com", port: 80],
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
