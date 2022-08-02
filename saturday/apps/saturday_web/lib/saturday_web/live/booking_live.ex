@@ -45,6 +45,7 @@ defmodule SaturdayWeb.BookingLive do
           socket,
           SaturdayWeb.BookingLive
         ))
+
     socket =
       socket
       |> assign(current_datetime: "")
@@ -105,6 +106,16 @@ defmodule SaturdayWeb.BookingLive do
 
   def handle_info(:applied_entries_updated, socket) do
     send(self(), :fetch_entry_range)
+
+    datetime = socket.assigns.current_datetime
+    datetime_exists = datetime != ""
+    if Saturday.Entries.booked?(datetime) do
+      send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
+        state: :already_booked_error,
+        datetime: datetime,
+        datetime_exists: datetime_exists
+      )
+    end
 
     {:noreply, start_loading(socket)}
   end
