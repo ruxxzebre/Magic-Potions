@@ -65,17 +65,19 @@ defmodule Saturday.Schedule do
   # alias Saturday.Schedule.Range
   # alias Saturday.Schedule.RangeItem
 
-  def format_date!(date) when is_binary(date) do
+  def format_date!(date, opts \\ [])
+
+  def format_date!(date, opts) when is_binary(date) do
     case Timex.parse(date, "{YYYY}-{0M}-{D}") do
-      {:error, _} -> format_date!(date_from_spec(date))
-      {:ok, date} -> format_date!(date)
+      {:error, _} -> format_date!(date_from_spec(date), opts)
+      {:ok, date} -> format_date!(date, opts)
     end
     # with {:ok, date} <- Timex.parse!(date, "{YYYY}-{OM}-{D}"),
     # do
     # end
   end
 
-  def format_date!(date) do
+  def format_date!(date, opts) do
     local_date = Timex.local(date)
 
     translate_weekday = fn name -> Translator.translate("uk", "weekdays", name) end
@@ -92,7 +94,14 @@ defmodule Saturday.Schedule do
       |> Timex.month_name()
       |> translate_month.()
 
-    "#{String.capitalize(weekday)}. #{local_date.day()} #{String.capitalize(month)} #{local_date.year()}"
+    date_string =
+      "#{String.capitalize(weekday)}. #{local_date.day()} #{String.capitalize(month)} #{local_date.year()}"
+
+    if Keyword.get(opts, :with_time, false) do
+      date_string <> ". #{local_date.hour()}:#{local_date.minute()}"
+    else
+      date_string
+    end
   end
 
   def format_time(date) do

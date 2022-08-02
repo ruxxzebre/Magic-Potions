@@ -14,7 +14,7 @@ defmodule SaturdayWeb.ModalComponent do
     <div class="modal-card">
     <header class="modal-card-head">
       <%= if @datetime_exists do %>
-        <p class="modal-card-title">Запис на <%= Schedule.format_date!(@datetime) %></p>
+        <p class="modal-card-title">Запис на <%= Schedule.format_date!(@datetime, with_time: true) %></p>
       <% end %>
       <button class="delete" aria-label="close"></button>
     </header>

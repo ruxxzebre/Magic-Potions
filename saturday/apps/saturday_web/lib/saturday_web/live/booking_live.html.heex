@@ -1,9 +1,11 @@
 <div class="container">
-  <.live_component module={SaturdayWeb.ModalComponent} 
-    id="create-entry-modal"
-    datetime={@current_datetime}
-    datetime_exists={@current_datetime != nil && @current_datetime != ""}
-  />
+  <%= if @live_action == :new do %>
+    <.live_component module={SaturdayWeb.ModalComponent} 
+      id="create-entry-modal"
+      datetime={@current_datetime}
+      datetime_exists={@current_datetime != nil && @current_datetime != ""}
+    />
+  <% end %>
   <%= if @loading do %>
     <div class="container is-max-widescreen">
       <h2>Завантаження...</h2>
@@ -30,7 +32,11 @@
                   >
                     <%= for entry <- range do %>
                       <%= live_patch render_entry_button(%{entry: entry}),
-                      to: Routes.live_path(@socket, SaturdayWeb.BookingLive, datetime: Schedule.date_to_spec(entry.date)) 
+                      to: Routes.booking_path(
+                        @socket, 
+                        :new,
+                        datetime: Schedule.date_to_spec(entry.date)
+                      ) 
                       %>
                     <% end %>
                     <%# <div class="box has-background-light has-text-weight-normal">Розгорнути</div> %>
