@@ -21,6 +21,7 @@ defmodule SaturdayWeb.Router do
     get "/management", ManagementController, :index
     get "/management/download_report", ManagementController, :download_report
     live "/booking", BookingLive
+    live "/booking/new", BookingLive, :new
     # live "/demo", DemoLive
   end
 
