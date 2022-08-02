@@ -1,30 +1,84 @@
+defmodule SaturdayWeb.ModalComponent.StateComponents do
+  use Phoenix.Component
+
+  def error(assigns) do
+    assigns = assign_new(assigns, :hrs_until_expires, fn -> 24 end)
+
+    ~H"""
+    <div>
+    errory
+    </div>
+    """
+  end
+
+  def success(assigns) do
+    ~H"""
+    <div>
+    successy
+    </div>
+    """
+  end
+
+  def already_booked(assigns) do
+    ~H"""
+    <div>
+    sorry, but booked
+    </div>
+    """
+  end
+end
+
 defmodule SaturdayWeb.ModalComponent do
   use Phoenix.LiveComponent
 
   alias Saturday.Schedule
+  alias Saturday.Entries
+  alias SaturdayWeb.ModalComponent.StateComponents
+
+  def update(assigns, socket) do
+    IO.inspect(assigns)
+    IO.inspect(socket)
+
+    state = cond do
+      Entries.booked?(assigns.datetime) -> :already_booked_error
+      true -> :application
+    end
+
+    assigns =
+      assigns
+      |> Map.put_new(:state, state)
+
+    socket = assign(socket, assigns)
+    {:ok, socket}
+  end
 
   def render(assigns) do
     ~H"""
     <div
       id={@id}
-      class={"modal#{if @datetime_exists, do: " is-active", else: ""}"}
+      class={"modal #{if @datetime_exists, do: "is-active", else: ""}"}
       phx-hook="InitModal"
     >
     <div class="modal-background"></div>
     <div class="modal-card">
     <header class="modal-card-head">
-      <%= if @datetime_exists do %>
-        <p class="modal-card-title">Запис на <%= Schedule.format_date!(@datetime, with_time: true) %></p>
-      <% end %>
+      <p class="modal-card-title">Запис на <%= Schedule.format_date!(@datetime, with_time: true) %></p>
       <button class="delete" aria-label="close"></button>
     </header>
-    <%= if @datetime_exists do %>
       <section class="modal-card-body">
-        <.live_component module={SaturdayWeb.ApplyingFormComponent}
-        datetime={@datetime}
-        id="applying-form-component" />
+      <%= case @state do %>
+        <% :application -> %>
+          <.live_component module={SaturdayWeb.ApplyingFormComponent}
+          datetime={@datetime}
+          id="applying-form-component" />
+        <% :error -> %>
+          <StateComponents.error />
+        <% :success -> %>
+          <StateComponents.success />
+        <% :already_booked_error -> %>
+          <StateComponents.already_booked />
+      <% end %>
       </section>
-    <% end %>
     </div>
     </div>
     """

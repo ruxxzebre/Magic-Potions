@@ -5,8 +5,6 @@ end
 defmodule SaturdayWeb.ApplyingFormComponent do
   use Phoenix.LiveComponent
 
-  alias Saturday.Entries
-  alias Saturday.Entries.Entry
   alias Saturday.Queue
 
   def mount(socket) do
@@ -31,9 +29,6 @@ defmodule SaturdayWeb.ApplyingFormComponent do
   end
 
   def handle_event("submit-form", _, socket) do
-
-    IO.inspect("submitting-form")
-
     name = socket.assigns.name
     email = socket.assigns.email
     phone = socket.assigns.phone

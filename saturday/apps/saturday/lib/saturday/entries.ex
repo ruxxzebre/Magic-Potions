@@ -52,6 +52,10 @@ defmodule Saturday.Entries do
   """
   def get_entry!(id), do: Repo.get!(Entry, id)
 
+  def booked?(date) do
+    Repo.get_by(Entry, booking_date: date) != nil
+  end
+
   @doc """
   Creates a entry.
 
