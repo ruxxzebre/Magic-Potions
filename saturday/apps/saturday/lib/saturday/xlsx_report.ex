@@ -68,14 +68,12 @@ defmodule Saturday.XLSX.Report do
   end
 
   def create_report do
-    sheet =
+    path = Application.app_dir(:saturday_web, "priv")
+
+    %Workbook{sheets: [
       set_sheet_columns()
       |> set_sheet_rows()
-
-    workbook = %Workbook{sheets: [sheet]}
-
-    path = Application.app_dir(:saturday_web, "priv")
-    workbook
+    ]}
     |> Elixlsx.write_to("#{path}/report-#{Timex.now()}.xlsx")
   end
 end
