@@ -33,6 +33,12 @@ defmodule Saturday.Queue do
   end
 
   @impl true
+  def handle_call({:booked?, date}, from, state) when is_binary(date) do
+    IO.inspect(from)
+    {:reply, Entries.booked?(date), state}
+  end
+
+  @impl true
   def handle_call({:apply_to_entry, map}, _from, state) do
     case Entries.create_entry(map) do
       {:error, _} ->
@@ -65,6 +71,10 @@ defmodule Saturday.Queue do
 
   def applied_entries() do
     GenServer.call(__MODULE__, :get_applied_entries)
+  end
+
+  def booked?(date) do
+    GenServer.call(__MODULE__, {:booked?, date})
   end
 
   @topic inspect(__MODULE__)

@@ -34,18 +34,36 @@ defmodule SaturdayWeb.ApplyingFormComponent do
     phone = socket.assigns.phone
     datetime = socket.assigns.datetime
 
-    socket = case Queue.apply_to_entry(%{
-      agent_name: name,
-      agent_phone: phone,
-      booking_date: datetime,
-      misc: "email: #{email}"
-    }) do
-      {:error} ->
+    socket = cond do
+      Queue.booked?(datetime) ->
+        send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
+          state: :already_booked_error,
+          datetime: datetime,
+          datetime_exists: datetime != ""
+        )
         socket
-        |> assign(error: "Unknown error")
-      {:ok} ->
-        send(self(), :close_modal)
-        socket
+      true ->
+        case Queue.apply_to_entry(%{
+          agent_name: name,
+          agent_phone: phone,
+          booking_date: datetime,
+          misc: "email: #{email}"
+        }) do
+          {:error} ->
+            send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
+              state: :error,
+              datetime: datetime,
+              datetime_exists: datetime != ""
+            )
+            socket
+          {:ok} ->
+            send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
+              state: :success,
+              datetime: datetime,
+              datetime_exists: datetime != ""
+            )
+            socket
+        end
     end
 
     {:noreply, socket}

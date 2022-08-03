@@ -81,7 +81,8 @@ defmodule Saturday.Entries do
   def get_entry!(id), do: Repo.get!(Entry, id)
 
   def booked?(date) do
-    Repo.get_by(Entry, booking_date: date) != nil
+    q = from e in Entry, where: e.booking_date == ^date
+    length(Repo.all(q)) != 0
   end
 
   @doc """
