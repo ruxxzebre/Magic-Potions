@@ -6,7 +6,8 @@ defmodule SaturdayWeb.ModalComponent.StateComponents do
 
     ~H"""
     <div>
-    errory
+      <div class="is-size-2 mb-5">Сталась похибка. Спробуйте ще раз.</div>
+      <%= close_button(type: "is-danger") %>
     </div>
     """
   end
@@ -14,7 +15,8 @@ defmodule SaturdayWeb.ModalComponent.StateComponents do
   def success(assigns) do
     ~H"""
     <div>
-    successy
+      <div class="is-size-2 mb-5">Все супер!</div>
+      <%= close_button(type: "is-success") %>
     </div>
     """
   end
@@ -22,8 +24,20 @@ defmodule SaturdayWeb.ModalComponent.StateComponents do
   def already_booked(assigns) do
     ~H"""
     <div>
-    sorry, but booked
+      <div class="is-size-2 mb-5">
+        Схоже хтось впорався швидше...
+        <br> Але не переймайся, все ще можеш обрати інший час.
+      </div>
+      <%= close_button(type: "is-info") %>
     </div>
+    """
+  end
+
+  def close_button(assigns \\ [type: "is-info"]) do
+    assigns = Enum.into(assigns, %{})
+
+    ~H"""
+    <button phx-click="close-modal" class={"button #{@type}"}>Закрити</button>
     """
   end
 end
