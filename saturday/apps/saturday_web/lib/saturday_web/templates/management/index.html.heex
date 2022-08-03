@@ -1,2 +1,37 @@
 <h1>Management Panel</h1>
 <a href="/management/download_report" class="button">Download Report</a>
+<a class="button is-info" href={"/management#{unless @render_table, do: "?table"}"}>
+	<%= unless @render_table, do: "Show", else: "Hide" %> Report
+</a>
+<%= if @render_table do %>
+<table class="table">
+	<thead>
+		<tr>
+			<%= for column_name <- ["ПІБ", "Телефон", "Пошта", "Зареєстровано на дату","Створено запис"] do %>
+				<th><%= column_name %></th>
+			<% end %>
+		</tr>
+	</thead>
+	<tbody>
+			<%= for entry <- @table_data do %>
+			<tr>
+				<th>
+					<%= entry.agent_name %>
+				</th>
+				<th>
+					<%= entry.agent_phone %>
+				</th>
+				<th>
+					<%= entry.misc %>
+				</th>
+				<th>
+					<%= entry.booking_date %>
+				</th>
+				<th>
+					<%= entry.inserted_at %>
+				</th>
+			</tr>
+			<% end %>
+	</tbody>
+</table>
+<% end %>
