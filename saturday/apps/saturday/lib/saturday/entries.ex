@@ -21,12 +21,40 @@ defmodule Saturday.Entries do
     Repo.all(Entry)
   end
 
+  def string_to_map(string) do
+    if !String.contains?(string, ":") do
+      %{}
+    else
+      string
+      |> String.split(",")
+      |> Enum.map(&String.split(&1, ":"))
+      |> Enum.reduce(%{}, &(Map.put(&2,
+        Enum.at(&1, 0) |> String.trim(),
+        Enum.at(&1, 1) |> String.trim()
+      )))
+    end
+  end
+
+  def list_entries(:format_fields) do
+    Repo.all(Entry)
+    |> Enum.map(fn entry ->
+      entry
+      |> Map.update!(:booking_date, fn date ->
+        date = Saturday.Schedule.date_from_spec(date)
+        Saturday.Schedule.format_date!(date, with_time: true)
+      end)
+      |> Map.update!(:inserted_at, &Saturday.Schedule.format_date!/1)
+      |> Map.put(:email, string_to_map(entry.misc) |> Map.get("email", entry.misc))
+    end)
+  end
+
   def list_entries(:only_dates, opts \\ []) do
     query = from(
       e in Entry,
       select: e.booking_date
     )
 
+    # Map.get(string_to_map(entry.misc), "email", entry.misc)
     list = Repo.all(query)
     cond do
       :parse_spec in opts ->

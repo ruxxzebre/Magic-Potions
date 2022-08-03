@@ -303,17 +303,18 @@ defmodule Saturday.Schedule do
     |> List.flatten()
   end
 
-  def date_to_spec(%DateTime{} = date) do
-    spec_map = Saturday.DateUtils.date_spec_map(date)
-    zeroify = &(if &1 > 9, do: &1, else: "0#{&1}")
-    "#{zeroify.(spec_map.day)}.#{zeroify.(spec_map.month)}"
-    <> ".#{spec_map.year}-#{zeroify.(date.hour)}"
-    <> ".#{zeroify.(date.minute)}"
+  def zeroify(thing) when is_binary(thing), do: String.to_integer(thing)
+
+  def zeroify(thing) do
+    if thing > 9, do: thing, else: "0#{thing}"
   end
 
-  # defp traverse_date_spec([date | time]) do
-  #
-  # end
+  def date_to_spec(%DateTime{} = date) do
+    spec_map = Saturday.DateUtils.date_spec_map(date)
+    "#{zeroify(spec_map.day)}.#{zeroify(spec_map.month)}"
+    <> ".#{spec_map.year}-#{zeroify(date.hour)}"
+    <> ".#{zeroify(date.minute)}"
+  end
 
   @spec_regex ~r/((\w{2})\.(\w{2})\.(\w{4})\-(\w{2})\.\w{2})/
 
