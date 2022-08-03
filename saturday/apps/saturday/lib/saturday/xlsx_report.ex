@@ -46,31 +46,9 @@ defmodule Saturday.XLSX.Report do
     end)
   end
 
-  def string_to_map(string) do
-    if !String.contains?(string, ":") do
-      %{}
-    else
-      string
-      |> String.split(",")
-      |> Enum.map(&String.split(&1, ":"))
-      |> Enum.reduce(%{}, &(Map.put(&2,
-        Enum.at(&1, 0) |> String.trim(),
-        Enum.at(&1, 1) |> String.trim()
-      )))
-    end
-  end
-
   def set_sheet_rows(sheet) do
     sheet =
-      Entries.list_entries()
-      |> Enum.map(fn entry ->
-        entry = Map.put(entry, :email, "")
-        %{
-          entry |
-          email: Map.get(string_to_map(entry.misc), "email", entry.misc),
-          inserted_at: Saturday.Schedule.format_date!(entry.inserted_at)
-        }
-      end)
+      Entries.list_entries(:format_fields)
       |> Enum.with_index()
       |> Enum.reduce(sheet, fn {entry, index}, sheet ->
         i = index + 2

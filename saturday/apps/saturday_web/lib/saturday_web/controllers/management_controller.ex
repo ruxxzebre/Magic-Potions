@@ -18,7 +18,7 @@ defmodule SaturdayWeb.ManagementController do
   end
 
   def index(conn, %{"table" => _}) do
-    table_data = Entries.list_entries()
+    table_data = Entries.list_entries(:format_fields)
 
     render(conn, "index.html", render_table: true, table_data: table_data)
   end
