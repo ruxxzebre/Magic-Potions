@@ -6,24 +6,24 @@
       datetime_exists={@current_datetime != nil && @current_datetime != ""}
     />
   <% end %>
-  <%= if @loading do %>
-    <div class="container is-max-widescreen">
-      <h2>Завантаження...</h2>
-    </div>
-  <% else %>
   <section>
     <div class="column">
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
             <label class="title is-size-2">Фільтр</label>
-            <input class="input is-size-3" name="search-query" type="text" placeholder="Пошук по даті">
+            <input class="input is-size-3" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
           </div>
         </div>
       </form>
       <div class="card article">
         <div class="card-content">
           <div class="media">
+            <%= if @loading do %>
+            <div class="container is-max-widescreen">
+              <h2>Завантаження...</h2>
+            </div>
+            <% else %>
             <div class="media-content has-text-centered">
               <%= for {date, %{range: range, localized_date: localized_date}} <- @date_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
@@ -45,6 +45,7 @@
                 <hr>
               <% end %>
             </div>
+            <% end %>
           </div>
           <%# <div class="content article-body">
             <p>Non arcu risus quis varius quam quisque. Dictum varius duis at consectetur lorem. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper. </p>
@@ -60,5 +61,4 @@
       </div>
     </div>
   </section>
-  <% end %>
 </div>

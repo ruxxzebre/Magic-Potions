@@ -8,8 +8,6 @@ defmodule SaturdayWeb.ApplyingFormComponent do
   alias Saturday.Queue
 
   def mount(socket) do
-    # TODO: with changeset
-
     socket = assign(socket,
       name: "",
       email: "",

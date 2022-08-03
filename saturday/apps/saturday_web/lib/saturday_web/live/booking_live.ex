@@ -30,7 +30,8 @@ defmodule SaturdayWeb.BookingLive do
     send(self(), {:fetch_entry_range, q})
 
     socket = assign(socket, search_q: q)
-    {:noreply, start_loading(socket)}
+    # {:noreply, start_loading(socket)}
+    {:noreply, socket}
   end
 
   def handle_event("apply-to-entry", %{"datetime" => datetime}, socket) do
