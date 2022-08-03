@@ -1,4 +1,5 @@
 defmodule SaturdayWeb.ManagementController do
+  alias Saturday.Entries
   use SaturdayWeb, :controller
   import Plug.Conn
 
@@ -16,7 +17,14 @@ defmodule SaturdayWeb.ManagementController do
     conn
   end
 
-  def index(conn, _params) do
-    render(conn, "index.html")
+  def index(conn, %{"table" => _}) do
+    table_data = Entries.list_entries()
+
+    render(conn, "index.html", render_table: true, table_data: table_data)
+  end
+
+  def index(conn, params) do
+    params |> IO.inspect
+    render(conn, "index.html", render_table: false)
   end
 end
