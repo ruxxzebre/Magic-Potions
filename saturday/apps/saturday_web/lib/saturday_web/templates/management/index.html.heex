@@ -1,8 +1,9 @@
 <h1>Management Panel</h1>
-<a href="/management/download_report" class="button">Download Report</a>
-<a class="button is-info" href={"/management#{unless @render_table, do: "?table"}"}>
+<a class="button is-success" href={"/management#{unless @render_table, do: "?table"}"}>
 	<%= unless @render_table, do: "Show", else: "Hide" %> Report
 </a>
+<a href="/management/download_report" class="button">Download Report</a>
+<a href="/dashboard/home" class="button is-info">Dashboard</a>
 <%= if @render_table do %>
 <table class="table">
 	<thead>

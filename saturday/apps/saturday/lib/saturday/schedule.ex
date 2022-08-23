@@ -1,19 +1,26 @@
 defmodule Saturday.Schedule.Filters do
   def filter_weekends(date_list) do
+    filter_date_by(date_list, :sunday?, false)
+  end
+
+  def filter_date_by(date_list, fun, positive \\ true) when is_atom(fun) do
     date_list
     |> Enum.filter(fn %{date: date} ->
-      weekday = Timex.local(date) |> Timex.weekday()
-      weekday not in [7]
+      if positive do
+        apply(__MODULE__, fun, [date])
+      else
+        not apply(__MODULE__, fun, [date])
+      end
     end)
   end
 
-  def is_n_day_of_week(date, n), do: Timex.local(date) |> Timex.weekday() == n
+  def nth_day_of_week?(date, n), do: Timex.local(date) |> Timex.weekday() == n
 
-  def is_sunday(date), do: is_n_day_of_week(date, 7)
+  def sunday?(date), do: nth_day_of_week?(date, 7)
 
-  def is_friday(date), do: is_n_day_of_week(date, 5)
+  def friday?(date), do: nth_day_of_week?(date, 5)
 
-  def is_satuday(date), do: is_n_day_of_week(date, 6)
+  def satuday?(date), do: nth_day_of_week?(date, 6)
 end
 
 defmodule Saturday.Schedule.RangeItem do
@@ -44,14 +51,17 @@ defmodule Saturday.Schedule.MemStorage do
 
   def handle_call(:get_range, _from, state) do
     Logger.info("Fetching range...")
-    state = case state.range do
-      [] ->
-        Logger.info("Cache is empty. Generating a new one...")
-        Map.put(state, :range, Saturday.Schedule.get_range_obscure())
-      _ ->
-        Logger.info("Range is cached. Retrieving...")
-        state
-    end
+
+    state =
+      case state.range do
+        [] ->
+          Logger.info("Cache is empty. Generating a new one...")
+          Map.put(state, :range, Saturday.Schedule.get_range_obscure())
+
+        _ ->
+          Logger.info("Range is cached. Retrieving...")
+          state
+      end
 
     {:reply, state.range, state}
   end
@@ -80,6 +90,7 @@ defmodule Saturday.Schedule do
       {:error, _} -> format_date!(date_from_spec(date), opts)
       {:ok, date} -> format_date!(date, opts)
     end
+
     # with {:ok, date} <- Timex.parse!(date, "{YYYY}-{OM}-{D}"),
     # do
     # end
@@ -153,14 +164,16 @@ defmodule Saturday.Schedule do
       end)
     end)
     |> Enum.map(fn {date, %{range: range} = data} ->
-      data = data
-      |> Map.put(:range,
-        range
-        |> Enum.filter(fn entry ->
-          date = entry.date
-          date_to_spec(date) not in exclude_dates
-        end)
-      )
+      data =
+        data
+        |> Map.put(
+          :range,
+          range
+          |> Enum.filter(fn entry ->
+            date = entry.date
+            date_to_spec(date) not in exclude_dates
+          end)
+        )
 
       {date, data}
     end)
@@ -174,9 +187,9 @@ defmodule Saturday.Schedule do
     day1 = Date.day_of_year(d1)
     day2 = Date.day_of_year(d2)
 
-    day1 == day2
-    && d1.hour() == d1.hour()
-    && d1.minute() == d2.minute()
+    day1 == day2 &&
+      d1.hour() == d1.hour() &&
+      d1.minute() == d2.minute()
   end
 
   @doc """
@@ -192,25 +205,51 @@ defmodule Saturday.Schedule do
   """
   @spec get_range() :: binary()
   def get_range do
-    # shifted = get_shifted_dates(100);
-
-    generate_range_new()
-    |> Filters.filter_weekends()
+    generate_range()
+    |> Filters.filter_date_by(:sunday?, false)
     |> format_range()
-    # |> filter_shifted(shifted)
+    |> Enum.map(fn {date, %{range: range} = st} ->
+      range =
+        range
+        |> Enum.filter(fn %{date: date} ->
+          a = date
+
+          cond do
+            Filters.friday?(a) && a.hour >= 16 && a.minute >= 45 ->
+              false
+
+            Filters.satuday?(a) && a.hour >= 14 ->
+              false
+
+            a.hour >= 18 ->
+              false
+
+            true ->
+              true
+          end
+        end)
+
+        {date, Map.put(st, :range, range)}
+    end)
   end
 
   def get_range_obscure, do: get_range()
 
   def filter_shifted(range, shifted) do
-    range |> Enum.map(fn {rdate, rval} ->
-      rval = rval |> Map.put(:range,
-        rval.range |> Enum.filter(fn inv ->
-          Enum.find(shifted, fn shifted_date ->
-            comp_dates(shifted_date, inv.date)
-          end) == nil
-        end)
-      )
+    range
+    |> Enum.map(fn {rdate, rval} ->
+      rval =
+        rval
+        |> Map.put(
+          :range,
+          rval.range
+          |> Enum.filter(fn inv ->
+            Enum.find(shifted, fn shifted_date ->
+              comp_dates(shifted_date, inv.date)
+            end) == nil
+          end)
+        )
+
       {rdate, rval}
     end)
   end
@@ -219,7 +258,7 @@ defmodule Saturday.Schedule do
   @entries_per_hour trunc(60 / @interval)
 
   def get_shifted_dates(n \\ 10) do
-    rarange = fn min, max -> floor(:rand.uniform()*(max - min)) + min end
+    rarange = fn min, max -> floor(:rand.uniform() * (max - min)) + min end
     now = Timex.set(Timex.local(), hour: 9, minute: 0, second: 0, day: 2, month: 8)
     # |> IO.inspect
 
@@ -237,23 +276,25 @@ defmodule Saturday.Schedule do
     for n <- 1..20 do
       get_shifted_date(now, 0, n)
     end
+
     # |> IO.inspect
   end
 
   def generate_shifted_dates(amount \\ 10) do
-
   end
 
   defp get_shifted_date(date, iterate_count, n) do
     case iterate_count do
-      ^n -> date
+      ^n ->
+        date
+
       c ->
         date = Timex.shift(date, hours: c + 1, minutes: c * @interval, days: 1)
         get_shifted_date(date, c + 1, n)
     end
   end
 
-  def generate_range_new() do
+  def generate_range() do
     # generate_range(Timex.set(Timex.local(), hour: 9, minute: 0, second: 0))
     from = DateTime.new!(~D[2022-08-01], ~T[08:26:08.003], "Europe/Kiev")
     to = DateTime.new!(~D[2022-08-20], ~T[08:26:08.003], "Europe/Kiev")
@@ -271,20 +312,23 @@ defmodule Saturday.Schedule do
     hours_amount = @end_day_at_hour - @start_day_at_hour
 
     # TODO: optimize with recursion
-    return = for day <- 0..days_amount do
-      date = from |> Timex.set(hour: @start_day_at_hour, minute: 0) |> Timex.shift(days: day)
+    return =
+      for day <- 0..days_amount do
+        date = from |> Timex.set(hour: @start_day_at_hour, minute: 0) |> Timex.shift(days: day)
 
-      for hour <- 0..hours_amount do
-        date = Timex.shift(date, hours: hour)
-        for minute <- 0..@entries_per_hour - 1 do
-          %{
-            date: Timex.shift(date, minutes: minute * @interval),
-            booked: false
-          }
+        for hour <- 0..hours_amount do
+          date = Timex.shift(date, hours: hour)
+
+          for minute <- 0..(@entries_per_hour - 1) do
+            %{
+              date: Timex.shift(date, minutes: minute * @interval),
+              booked: false
+            }
+          end
         end
       end
-    end
-    |> List.flatten()
+      |> List.flatten()
+
     # |> sort_range()
 
     return
@@ -298,12 +342,14 @@ defmodule Saturday.Schedule do
     raise "Not implemented"
   end
 
-  def generate_range(relative_to_date) do
+  # ! DEPRECATED
+  def generate_range_dep(relative_to_date) do
     for day <- 1..5 do
       for hour <- 0..7 do
         for minute <- 1..@entries_per_hour do
           %{
-            date: Timex.shift(relative_to_date, hours: hour, minutes: minute * @interval, days: day),
+            date:
+              Timex.shift(relative_to_date, hours: hour, minutes: minute * @interval, days: day),
             booked: false
           }
         end
@@ -320,9 +366,10 @@ defmodule Saturday.Schedule do
 
   def date_to_spec(%DateTime{} = date) do
     spec_map = Saturday.DateUtils.date_spec_map(date)
-    "#{zeroify(spec_map.day)}.#{zeroify(spec_map.month)}"
-    <> ".#{spec_map.year}-#{zeroify(date.hour)}"
-    <> ".#{zeroify(date.minute)}"
+
+    "#{zeroify(spec_map.day)}.#{zeroify(spec_map.month)}" <>
+      ".#{spec_map.year}-#{zeroify(date.hour)}" <>
+      ".#{zeroify(date.minute)}"
   end
 
   @spec_regex ~r/((\w{2})\.(\w{2})\.(\w{4})\-(\w{2})\.\w{2})/
@@ -334,21 +381,24 @@ defmodule Saturday.Schedule do
   def date_from_spec(date_spec) do
     date_spec
     |> String.split("-")
-    |> Enum.map(&(String.split(&1, ".")))
+    |> Enum.map(&String.split(&1, "."))
     |> Enum.with_index()
-    |> Enum.reduce(%{ year: 0, month: 0, day: 0, minute: 0, hour: 0 },
+    |> Enum.reduce(
+      %{year: 0, month: 0, day: 0, minute: 0, hour: 0},
       fn {curr, index}, acc ->
         case index do
           0 ->
             day = hd(curr)
             month = hd(tl(curr))
             year = hd(tl(tl(curr)))
-            %{ acc | day: day, month: month, year: year }
+            %{acc | day: day, month: month, year: year}
+
           1 ->
             hour = hd(curr)
             minute = hd(tl(curr))
-            %{ acc | hour: hour, minute: minute }
+            %{acc | hour: hour, minute: minute}
         end
-      end)
+      end
+    )
   end
 end
