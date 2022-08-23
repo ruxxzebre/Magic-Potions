@@ -84,8 +84,6 @@ defmodule SaturdayWeb.Router do
       import Phoenix.LiveDashboard.Router
 
       scope "/" do
-        pipe_through :browser
-
         live_dashboard "/dashboard", metrics: SaturdayWeb.Telemetry
       end
     end
