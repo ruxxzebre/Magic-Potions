@@ -3,9 +3,17 @@ defmodule Saturday.Schedule.Filters do
     date_list
     |> Enum.filter(fn %{date: date} ->
       weekday = Timex.local(date) |> Timex.weekday()
-      weekday not in [6, 7]
+      weekday not in [7]
     end)
   end
+
+  def is_n_day_of_week(date, n), do: Timex.local(date) |> Timex.weekday() == n
+
+  def is_sunday(date), do: is_n_day_of_week(date, 7)
+
+  def is_friday(date), do: is_n_day_of_week(date, 5)
+
+  def is_satuday(date), do: is_n_day_of_week(date, 6)
 end
 
 defmodule Saturday.Schedule.RangeItem do
@@ -265,6 +273,7 @@ defmodule Saturday.Schedule do
     # TODO: optimize with recursion
     return = for day <- 0..days_amount do
       date = from |> Timex.set(hour: @start_day_at_hour, minute: 0) |> Timex.shift(days: day)
+
       for hour <- 0..hours_amount do
         date = Timex.shift(date, hours: hour)
         for minute <- 0..@entries_per_hour - 1 do
