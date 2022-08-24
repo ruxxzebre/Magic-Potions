@@ -12,7 +12,7 @@ import Config
 config :saturday_web, SaturdayWeb.Endpoint,
   url: [
     host: (System.get_env("HOST_URL") || raise "Please specify HOST_URL"),
-    port: (System.get_env("HOST_PORT" || raise "Please specify HOST_PORT"))
+    port: 80
   ],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
