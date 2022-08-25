@@ -5,6 +5,8 @@ defmodule Saturday.Queue do
   use GenServer
   alias Saturday.Entries
 
+  use Saturday.SubBehaviour, topic: inspect(__MODULE__)
+
   def start_link(_) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -12,6 +14,8 @@ defmodule Saturday.Queue do
   @impl true
   def init(:ok) do
     existing_entries = Entries.list_entries(:only_dates)
+    IO.puts("EXT_ENTR")
+    IO.inspect(existing_entries)
 
     {:ok, %{
       applied_entries: existing_entries
@@ -75,27 +79,5 @@ defmodule Saturday.Queue do
 
   def booked?(date) do
     GenServer.call(__MODULE__, {:booked?, date})
-  end
-
-  @topic inspect(__MODULE__)
-
-  def subscribe(topic_prefix \\ "") do
-    Phoenix.PubSub.subscribe(Saturday.PubSub, @topic <> topic_prefix)
-  end
-
-  def broadcast(event) do
-    Phoenix.PubSub.broadcast(Saturday.PubSub, @topic, event)
-  end
-
-  def broadcast(event, data) do
-    Phoenix.PubSub.broadcast(Saturday.PubSub, @topic, {event, data})
-  end
-
-  def broadcast_w_prefix(event, topic_prefix) when is_binary(topic_prefix) do
-    Phoenix.PubSub.broadcast(Saturday.PubSub, @topic <> topic_prefix, event)
-  end
-
-  def broadcast_w_prefix(event, data, topic_prefix) when is_binary(topic_prefix) do
-    Phoenix.PubSub.broadcast(Saturday.PubSub, @topic <> topic_prefix, {event, data})
   end
 end
