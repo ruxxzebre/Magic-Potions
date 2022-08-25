@@ -9,7 +9,7 @@
 		</tr>
 	</thead>
 	<tbody>
-			<%= for entry <- @table_data do %>
+			<%= for entry <- Enum.reverse(@table_data) do %>
 			<tr>
 				<th>
 					<%= entry.agent_name %>
@@ -27,7 +27,11 @@
 					<%= entry.inserted_at %>
 				</th>
 				<th>
-					<button class="button is-danger">Видалити</button>
+					<button 
+						class="button is-danger"
+						phx-click="delete_entry"
+						phx-value-id={entry.id}
+					>Видалити</button>
 				</th>
 			</tr>
 			<% end %>

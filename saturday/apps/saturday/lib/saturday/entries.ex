@@ -8,6 +8,8 @@ defmodule Saturday.Entries do
 
   alias Saturday.Entries.Entry
 
+  use Saturday.SubBehaviour, topic: inspect(__MODULE__)
+
   @doc """
   Returns the list of entries.
 
@@ -19,20 +21,6 @@ defmodule Saturday.Entries do
   """
   def list_entries do
     Repo.all(Entry)
-  end
-
-  def string_to_map(string) do
-    if !String.contains?(string, ":") do
-      %{}
-    else
-      string
-      |> String.split(",")
-      |> Enum.map(&String.split(&1, ":"))
-      |> Enum.reduce(%{}, &(Map.put(&2,
-        Enum.at(&1, 0) |> String.trim(),
-        Enum.at(&1, 1) |> String.trim()
-      )))
-    end
   end
 
   def list_entries(:format_fields) do
@@ -61,6 +49,20 @@ defmodule Saturday.Entries do
         list
         |> Enum.map(&Saturday.Schedule.date_from_spec/1)
       true -> list
+    end
+  end
+
+  def string_to_map(string) do
+    if !String.contains?(string, ":") do
+      %{}
+    else
+      string
+      |> String.split(",")
+      |> Enum.map(&String.split(&1, ":"))
+      |> Enum.reduce(%{}, &(Map.put(&2,
+        Enum.at(&1, 0) |> String.trim(),
+        Enum.at(&1, 1) |> String.trim()
+      )))
     end
   end
 
@@ -101,6 +103,7 @@ defmodule Saturday.Entries do
     %Entry{}
     |> Entry.changeset(attrs)
     |> Repo.insert()
+    |> broadcast2(:new_entry_created)
   end
 
   @doc """
@@ -135,6 +138,7 @@ defmodule Saturday.Entries do
   """
   def delete_entry(%Entry{} = entry) do
     Repo.delete(entry)
+    |> broadcast2(:entry_deleted)
   end
 
   @doc """
