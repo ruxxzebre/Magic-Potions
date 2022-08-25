@@ -1,3 +1,21 @@
+defmodule Saturday.Schedule.Validators.ComparisonMap do
+  defstruct [date_form: ""]
+end
+
+defmodule Saturday.Schedule.Validators do
+  alias Saturday.Schedule
+  alias Saturday.Schedule.Validators.ComparisonMap
+
+  def validate_entry_date(date, %ComparisonMap{} = comparison_map) when is_binary(date) do
+    Schedule.date_from_spec(date)
+    |> validate_entry_date(comparison_map)
+  end
+
+  def validate_entry_date(date, %ComparisonMap{} = comparison_map) do
+    true
+  end
+end
+
 defmodule Saturday.Schedule.Filters do
   def filter_weekends(date_list) do
     filter_date_by(date_list, :sunday?, false)
