@@ -27,7 +27,6 @@ defmodule Saturday.Queue do
 
   @impl true
   def handle_call({:apply_to_entry, date}, from, state) when is_binary(date) do
-    IO.inspect(from)
     state = Map.update!(state, :applied_entries, fn entries -> [date | entries] end)
     broadcast(:applied_entries_updated)
 
@@ -35,8 +34,7 @@ defmodule Saturday.Queue do
   end
 
   @impl true
-  def handle_call({:booked?, date}, from, state) when is_binary(date) do
-    IO.inspect(from)
+  def handle_call({:booked?, date}, _from, state) when is_binary(date) do
     {:reply, Entries.booked?(date), state}
   end
 
