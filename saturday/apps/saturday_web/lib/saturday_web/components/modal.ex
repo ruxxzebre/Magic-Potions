@@ -50,9 +50,6 @@ defmodule SaturdayWeb.ModalComponent do
   alias SaturdayWeb.ModalComponent.StateComponents
 
   def update(assigns, socket) do
-    IO.inspect(assigns)
-    IO.inspect(socket)
-
     state = cond do
       Entries.booked?(assigns.datetime) -> :already_booked_error
       true -> :application
