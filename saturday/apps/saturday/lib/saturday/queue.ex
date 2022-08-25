@@ -14,8 +14,6 @@ defmodule Saturday.Queue do
   @impl true
   def init(:ok) do
     existing_entries = Entries.list_entries(:only_dates)
-    IO.puts("EXT_ENTR")
-    IO.inspect(existing_entries)
 
     {:ok, %{
       applied_entries: existing_entries
@@ -44,8 +42,10 @@ defmodule Saturday.Queue do
 
   @impl true
   def handle_call({:apply_to_entry, map}, _from, state) do
+    require Logger
     case Entries.create_entry(map) do
-      {:error, _} ->
+      {:error, _changeset} ->
+        Logger.error("Error when creating a new entry.")
         # changeset.errors
         # example:
         # errors: [booking_date: {"can't be blank", [validation: :required]}],
