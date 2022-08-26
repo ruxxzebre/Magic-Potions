@@ -1,65 +1,3 @@
-defmodule Saturday.Schedule.RuleSet do
-  defstruct date_from: Timex.now(),
-            date_to: Timex.now(),
-            time_rules: %{
-              specific: [
-                %{
-                  day_of_week: 5,
-                  start_day_at_hour: 9,
-                  end_day_at_hour: 16,
-                  minute_interval: 15
-                },
-                %{
-                  day_of_week: 6,
-                  start_day_at_hour: 9,
-                  end_day_at_hour: 14,
-                  minute_interval: 15
-                }
-              ],
-              fallback: %{
-                start_day_at_hour: 9,
-                end_day_at_hour: 18,
-                minute_interval: 15
-              }
-            }
-
-  def get_time_rule(%__MODULE__{} = ruleset, %DateTime{} = date) do
-    rule = find_time_rule(ruleset.time_rules.specific, date)
-
-    if rule == [] do
-      ruleset.time_rules.fallback
-    end
-  end
-
-  defp find_time_rule([head | tail], %DateTime{} = date) do
-    if Timex.weekday(date) == head.day_of_week do
-      head
-    else
-      if tail == [] do
-        []
-      else
-        find_time_rule(tail, date)
-      end
-    end
-  end
-
-  def validate_date_against_ruleset(%__MODULE__{} = ruleset, %DateTime{} = date) do
-    time_rule = get_time_rule(ruleset, date)
-    minute_interval = time_rule.minute_interval
-    entries_per_hour = trunc(60 / minute_interval)
-
-    # must be -1 or 0
-    comp_date_from = Timex.compare(ruleset.date_from, date)
-    # must be 1 or 0
-    comp_date_to = Timex.compare(ruleset.date_to, date)
-
-    (comp_date_from == -1 || comp_date_from == 0) &&
-      (comp_date_to == 1 || comp_date_to == 0) &&
-      ((date.minute / minute_interval) in for i <- 0..entries_per_hour, do: i) &&
-      true
-  end
-end
-
 defmodule Saturday.Schedule.Validators.ComparisonMap do
   defstruct date_form: ""
 end
@@ -77,32 +15,6 @@ defmodule Saturday.Schedule.Validators do
     true
   end
 end
-
-defmodule Saturday.Schedule.Filters do
-  def filter_weekends(date_list) do
-    filter_date_by(date_list, :sunday?, false)
-  end
-
-  def filter_date_by(date_list, fun, positive \\ true) when is_atom(fun) do
-    date_list
-    |> Enum.filter(fn %{date: date} ->
-      if positive do
-        apply(__MODULE__, fun, [date])
-      else
-        not apply(__MODULE__, fun, [date])
-      end
-    end)
-  end
-
-  def nth_day_of_week?(date, n), do: Timex.local(date) |> Timex.weekday() == n
-
-  def sunday?(date), do: nth_day_of_week?(date, 7)
-
-  def friday?(date), do: nth_day_of_week?(date, 5)
-
-  def satuday?(date), do: nth_day_of_week?(date, 6)
-end
-
 defmodule Saturday.Schedule.RangeItem do
   @enforce_keys [:date]
   defstruct [:date, booked: false]
@@ -111,44 +23,6 @@ end
 defmodule Saturday.Schedule.Range do
   @enforce_keys [:date]
   defstruct [:date, date_forms: [""], localized_date: "", range: []]
-end
-
-defmodule Saturday.Schedule.MemStorage do
-  require Logger
-  use GenServer
-
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
-  end
-
-  def init(:ok) do
-    {:ok, %{range: Saturday.Schedule.get_range_obscure()}}
-  end
-
-  def handle_call(:get_simplified_range, _from, state) do
-    {:reply, state.range, state}
-  end
-
-  def handle_call(:get_range, _from, state) do
-    Logger.info("Fetching range...")
-
-    state =
-      case state.range do
-        [] ->
-          Logger.info("Cache is empty. Generating a new one...")
-          Map.put(state, :range, Saturday.Schedule.get_range_obscure())
-
-        _ ->
-          Logger.info("Range is cached. Retrieving...")
-          state
-      end
-
-    {:reply, state.range, state}
-  end
-
-  def get_range() do
-    GenServer.call(__MODULE__, :get_range)
-  end
 end
 
 defmodule Saturday.Schedule do
