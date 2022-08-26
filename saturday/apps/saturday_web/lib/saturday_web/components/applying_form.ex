@@ -1,7 +1,3 @@
-defmodule SaturdayWeb.FormFieldComponent do
-
-end
-
 defmodule SaturdayWeb.ApplyingFormComponent do
   use Phoenix.LiveComponent
 
