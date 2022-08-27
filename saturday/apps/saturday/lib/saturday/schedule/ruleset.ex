@@ -1,22 +1,43 @@
+defmodule Saturday.Schedule.RuleSet.TimeRuleSet do
+  defstruct day_of_week: 0,
+            start_day_at_hour: 0,
+            end_day_at_hour: 0,
+            minute_interval: 0
+end
+
 defmodule Saturday.Schedule.RuleSet do
-  defstruct date_from: Timex.now(),
-            date_to: Timex.now(),
+  alias Saturday.Schedule.RuleSet.TimeRuleSet
+
+  defstruct date_from:
+              Timex.now()
+              |> Timex.set(
+                year: 2022,
+                month: 8,
+                day: 20
+              ),
+            date_to:
+              Timex.now()
+              |> Timex.set(
+                year: 2022,
+                month: 9,
+                day: 20
+              ),
             time_rules: %{
               specific: [
-                %{
+                %TimeRuleSet{
                   day_of_week: 5,
                   start_day_at_hour: 9,
                   end_day_at_hour: 16,
                   minute_interval: 15
                 },
-                %{
+                %TimeRuleSet{
                   day_of_week: 6,
                   start_day_at_hour: 9,
                   end_day_at_hour: 14,
                   minute_interval: 15
                 }
               ],
-              fallback: %{
+              fallback: %TimeRuleSet{
                 start_day_at_hour: 9,
                 end_day_at_hour: 18,
                 minute_interval: 15
@@ -28,6 +49,8 @@ defmodule Saturday.Schedule.RuleSet do
 
     if rule == [] do
       ruleset.time_rules.fallback
+    else
+      rule
     end
   end
 
@@ -55,7 +78,20 @@ defmodule Saturday.Schedule.RuleSet do
 
     (comp_date_from == -1 || comp_date_from == 0) &&
       (comp_date_to == 1 || comp_date_to == 0) &&
-      ((date.minute / minute_interval) in for i <- 0..entries_per_hour, do: i) &&
-      true
+      zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i) &&
+      date.hour >= time_rule.start_day_at_hour &&
+      date.hour <= time_rule.end_day_at_hour
+  end
+
+  def is_zero(number) when is_number(number) do
+    number == trunc(number)
+  end
+
+  def zero_num(number) when is_number(number) do
+    if is_zero(number) do
+      trunc(number)
+    else
+      number
+    end
   end
 end
