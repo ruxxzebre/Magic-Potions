@@ -7,6 +7,13 @@ defmodule Saturday.Application do
 
   @impl true
   def start(_type, _args) do
+    Saturday.ConfigStorage.init_config_table()
+
+    Saturday.ConfigStorage.set_data(
+      :ruleset,
+      %Saturday.Schedule.RuleSet{}
+    )
+
     children = [
       # Start the Ecto repository
       Saturday.Repo,
