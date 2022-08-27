@@ -161,8 +161,7 @@ defmodule Saturday.Schedule do
   """
   @spec get_range() :: binary()
   def get_range do
-    # TODO: Make ETS server and Get ruleset from there
-    generate_range(%RuleSet{})
+    generate_range(Saturday.ConfigStorage.get_data(:ruleset))
     |> Filters.filter_date_by(:sunday?, false)
     |> format_range()
     |> Enum.map(fn {date, %{range: range} = st} ->
@@ -226,14 +225,10 @@ defmodule Saturday.Schedule do
   end
 
   # TODO: start_day_at_time for precisity
-  @start_day_at_hour 9
-  @end_day_at_hour 18
 
   @spec generate_range_from_to(%DateTime{}, %DateTime{}, %RuleSet{}) :: []
   defp generate_range_from_to(from, to, %RuleSet{} = ruleset) do
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
-    # time_rule = RuleSet.get_time_rule(ruleset, date)
-    # hours_amount = @end_day_at_hour - @start_day_at_hour
     date_from_time_rule = RuleSet.get_time_rule(ruleset, from)
 
     # TODO: optimize with (recursion?)
