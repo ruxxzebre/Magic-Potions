@@ -7,6 +7,7 @@ end
 
 defmodule Saturday.Schedule.RuleSet do
   alias Saturday.Schedule.RuleSet.TimeRuleSet
+  alias Saturday.Schedule.RuleSet
 
   defstruct date_from:
               Timex.now()
@@ -44,7 +45,8 @@ defmodule Saturday.Schedule.RuleSet do
               }
             }
 
-  def get_time_rule(%__MODULE__{} = ruleset, %DateTime{} = date) do
+  @spec get_time_rule(%RuleSet{}, %DateTime{}) :: %TimeRuleSet{}
+  def get_time_rule(%RuleSet{} = ruleset, %DateTime{} = date) do
     rule = find_time_rule(ruleset.time_rules.specific, date)
 
     if rule == [] do
