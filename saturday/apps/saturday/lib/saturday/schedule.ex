@@ -15,6 +15,7 @@ defmodule Saturday.Schedule.Validators do
     true
   end
 end
+
 defmodule Saturday.Schedule.RangeItem do
   @enforce_keys [:date]
   defstruct [:date, booked: false]
@@ -34,6 +35,7 @@ defmodule Saturday.Schedule do
 
   alias Timex.Translator
   alias Saturday.Schedule.Filters
+  alias Saturday.Schedule.RuleSet
   # alias Saturday.Schedule.Range
   # alias Saturday.Schedule.RangeItem
 
@@ -159,7 +161,8 @@ defmodule Saturday.Schedule do
   """
   @spec get_range() :: binary()
   def get_range do
-    generate_range()
+    # TODO: Make ETS server and Get ruleset from there
+    generate_range(%RuleSet{})
     |> Filters.filter_date_by(:sunday?, false)
     |> format_range()
     |> Enum.map(fn {date, %{range: range} = st} ->
@@ -211,64 +214,41 @@ defmodule Saturday.Schedule do
   @interval 15
   @entries_per_hour trunc(60 / @interval)
 
-  def get_shifted_dates(n \\ 10) do
-    rarange = fn min, max -> floor(:rand.uniform() * (max - min)) + min end
-    now = Timex.set(Timex.local(), hour: 9, minute: 0, second: 0, day: 2, month: 8)
-    # |> IO.inspect
-
-    # a = generate_range_min_max(2, 2)
-    # IO.inspect a
-
-    # hour = rarange.(9, 18)
-    # minute = rarange.(3, 6)
-    # day = rarange.(1, 15)
-
-    # hour |> IO.inspect
-    # minute |> IO.inspect
-    # day |> IO.inspect
-    # IO.inspect(n)
-    for n <- 1..20 do
-      get_shifted_date(now, 0, n)
-    end
-
-    # |> IO.inspect
-  end
-
-  def generate_shifted_dates(amount \\ 10) do
-  end
-
-  defp get_shifted_date(date, iterate_count, n) do
-    case iterate_count do
-      ^n ->
-        date
-
-      c ->
-        date = Timex.shift(date, hours: c + 1, minutes: c * @interval, days: 1)
-        get_shifted_date(date, c + 1, n)
-    end
-  end
-
-  def generate_range() do
+  @spec generate_range(%RuleSet{}) :: []
+  def generate_range(%RuleSet{} = ruleset) do
     # generate_range(Timex.set(Timex.local(), hour: 9, minute: 0, second: 0))
-    from = DateTime.new!(~D[2022-08-01], ~T[08:26:08.003], "Europe/Kiev")
-    to = DateTime.new!(~D[2022-08-20], ~T[08:26:08.003], "Europe/Kiev")
+    # from = DateTime.new!(~D[2022-08-01], ~T[08:26:08.003], "Europe/Kiev")
+    # to = DateTime.new!(~D[2022-08-20], ~T[08:26:08.003], "Europe/Kiev")
+    from = ruleset.date_from
+    to = ruleset.date_to
 
-    generate_range_from_to(from, to)
+    generate_range_from_to(from, to, ruleset)
   end
 
   # TODO: start_day_at_time for precisity
   @start_day_at_hour 9
   @end_day_at_hour 18
 
-  @spec generate_range_from_to(%DateTime{}, %DateTime{}) :: []
-  defp generate_range_from_to(from, to) do
+  @spec generate_range_from_to(%DateTime{}, %DateTime{}, %RuleSet{}) :: []
+  defp generate_range_from_to(from, to, %RuleSet{} = ruleset) do
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
-    hours_amount = @end_day_at_hour - @start_day_at_hour
+    # time_rule = RuleSet.get_time_rule(ruleset, date)
+    # hours_amount = @end_day_at_hour - @start_day_at_hour
+    date_from_time_rule = RuleSet.get_time_rule(ruleset, from)
 
     # TODO: optimize with (recursion?)
     return =
       for day <- 0..days_amount do
-        date = from |> Timex.set(hour: @start_day_at_hour, minute: 0) |> Timex.shift(days: day)
+        date =
+          from
+          |> Timex.set(
+            hour: date_from_time_rule.start_day_at_hour,
+            minute: 0
+          )
+          |> Timex.shift(days: day)
+
+        time_rule = RuleSet.get_time_rule(ruleset, date)
+        hours_amount = time_rule.end_day_at_hour - time_rule.start_day_at_hour
 
         for hour <- 0..hours_amount do
           date = Timex.shift(date, hours: hour)
