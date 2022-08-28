@@ -1,8 +1,14 @@
 defmodule Saturday.Schedule.RuleSet.TimeRuleSet do
   defstruct day_of_week: 0,
-            start_day_at_hour: 0,
-            end_day_at_hour: 0,
-            minute_interval: 0
+            minute_interval: 0,
+            start_day_at: %{
+              hour: 0,
+              minute: 0
+            },
+            end_day_at: %{
+              hour: 0,
+              minute: 0
+            }
 end
 
 defmodule Saturday.Schedule.RuleSet do
@@ -14,34 +20,56 @@ defmodule Saturday.Schedule.RuleSet do
               |> Timex.set(
                 year: 2022,
                 month: 8,
-                day: 20
+                day: 20,
+                hour: 0,
+                minute: 0
               ),
             date_to:
               Timex.now()
               |> Timex.set(
                 year: 2022,
                 month: 9,
-                day: 20
+                day: 20,
+                hour: 0,
+                minute: 0
               ),
             time_rules: %{
               specific: [
                 %TimeRuleSet{
                   day_of_week: 5,
-                  start_day_at_hour: 9,
-                  end_day_at_hour: 16,
+                  start_day_at: %{
+                    hour: 9,
+                    minute: 0
+                  },
+                  end_day_at: %{
+                    hour: 16,
+                    minute: 0
+                  },
                   minute_interval: 15
                 },
                 %TimeRuleSet{
                   day_of_week: 6,
-                  start_day_at_hour: 9,
-                  end_day_at_hour: 14,
+                  start_day_at: %{
+                    hour: 9,
+                    minute: 0
+                  },
+                  end_day_at: %{
+                    hour: 14,
+                    minute: 0
+                  },
                   minute_interval: 15
                 }
               ],
               fallback: %TimeRuleSet{
-                start_day_at_hour: 9,
-                end_day_at_hour: 18,
-                minute_interval: 15
+                minute_interval: 15,
+                start_day_at: %{
+                  hour: 9,
+                  minute: 0
+                },
+                end_day_at: %{
+                  hour: 18,
+                  minute: 0
+                }
               }
             }
 
@@ -74,15 +102,30 @@ defmodule Saturday.Schedule.RuleSet do
     entries_per_hour = trunc(60 / minute_interval)
 
     # must be -1 or 0
+    IO.inspect(date)
+    IO.inspect("date_from: #{ruleset.date_from}")
+    IO.inspect("date_to: #{ruleset.date_to}")
     comp_date_from = Timex.compare(ruleset.date_from, date)
     # must be 1 or 0
     comp_date_to = Timex.compare(ruleset.date_to, date)
+    IO.puts("comp_date_from: #{comp_date_from}. comp_date_to: #{comp_date_to}")
+    IO.puts("(comp_date_from == -1 || comp_date_from == 0) #{(comp_date_from == -1 || comp_date_from == 0)}")
+    IO.puts("(comp_date_to == 1 || comp_date_to == 0) #{(comp_date_to == 1 || comp_date_to == 0)}")
+    IO.puts("zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i) #{zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i)}")
+    IO.puts("date.hour >= time_rule.start_day_at.hour #{date.hour >= time_rule.start_day_at.hour}")
+    IO.puts("date.hour <= time_rule.end_day_at.hour #{date.hour <= time_rule.end_day_at.hour}")
+    # IO.puts("date.minute*date.hour >= time_rule.start_day_at.minute #{date.hour >= time_rule.start_day_at.minute}")
+    # IO.puts("date.minute*date.hour <= time_rule.end_day_at.minute #{date.hour <= time_rule.end_day_at.minute}")
+
+    %{ start_day_at: start_day_at, end_day_at: end_day_at } = time_rule
 
     (comp_date_from == -1 || comp_date_from == 0) &&
       (comp_date_to == 1 || comp_date_to == 0) &&
-      zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i) &&
-      date.hour >= time_rule.start_day_at_hour &&
-      date.hour <= time_rule.end_day_at_hour
+      zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i)
+      date.hour >= start_day_at.hour &&
+      date.hour <= end_day_at.hour &&
+      date.minute + date.hour*60 >= start_day_at.minute + start_day_at.hour*60 &&
+      date.minute + date.hour*60 <= end_day_at.minute + end_day_at.hour*60
   end
 
   def is_zero(number) when is_number(number) do

@@ -17,13 +17,13 @@ defmodule SaturdayWeb.BookingLive do
     send(self(), :fetch_entry_range)
 
     socket
-      |> assign(
-          search_q: "",
-          date_range: [],
-          temporary_assigns: [date_range: []],
-          current_datetime: nil
-        )
-      |> start_loading()
+    |> assign(
+      search_q: "",
+      date_range: [],
+      temporary_assigns: [date_range: []],
+      current_datetime: nil
+    )
+    |> start_loading()
   end
 
   def handle_event("update-query", %{"search-query" => q}, socket) do
@@ -42,46 +42,71 @@ defmodule SaturdayWeb.BookingLive do
   def handle_event("close-modal", _, socket) do
     socket =
       push_patch(socket,
-        to: Routes.live_path(
-          socket,
-          SaturdayWeb.BookingLive
-        ))
+        to:
+          Routes.live_path(
+            socket,
+            SaturdayWeb.BookingLive
+          )
+      )
 
     socket =
       socket
       |> assign(current_datetime: "")
+
     {:noreply, socket}
   end
 
   def handle_params(params, _url, socket) do
     datetime = Map.get(params, "datetime", "")
 
-    socket = cond do
-      Schedule.validate_spec_date(datetime) ->
-        socket
-        |> assign(current_datetime: datetime)
-      datetime != "" ->
-        socket
-        |> push_patch(
-          to: Routes.live_path(
-            socket,
-            SaturdayWeb.BookingLive
+    socket =
+      cond do
+        Schedule.validate_spec_date(datetime) ->
+          specked_date = Schedule.date_from_spec(datetime, true)
+          ruleset = Saturday.ConfigStorage.get_data(:ruleset)
+          valid? = Schedule.RuleSet.validate_date_against_ruleset(ruleset, specked_date)
+
+          if valid? do
+            socket
+            |> assign(current_datetime: datetime)
+          else
+            socket
+            |> push_patch(
+              to:
+                Routes.live_path(
+                  socket,
+                  SaturdayWeb.BookingLive
+                )
+            )
+          end
+
+        datetime != "" ->
+          socket
+          |> push_patch(
+            to:
+              Routes.live_path(
+                socket,
+                SaturdayWeb.BookingLive
+              )
           )
-        )
-      true -> socket
-    end
+
+        true ->
+          socket
+      end
 
     {:noreply, socket}
   end
 
-
   def handle_info(:close_modal, socket) do
     socket =
       push_patch(socket,
-        to: Routes.live_path(
-          socket,
-          SaturdayWeb.BookingLive
-        ))
+        to:
+          Routes.live_path(
+            socket,
+            SaturdayWeb.BookingLive
+          )
+      )
+
     {:noreply, socket}
   end
 
