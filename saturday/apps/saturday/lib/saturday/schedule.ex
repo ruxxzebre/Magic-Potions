@@ -73,7 +73,7 @@ defmodule Saturday.Schedule do
       "#{String.capitalize(weekday)}. #{local_date.day()} #{String.capitalize(month)} #{local_date.year()}"
 
     if Keyword.get(opts, :with_time, false) do
-      date_string <> ". #{local_date.hour()}:#{local_date.minute()}"
+      date_string <> ". #{zeroify(local_date.hour())}:#{zeroify(local_date.minute())}"
     else
       date_string
     end
