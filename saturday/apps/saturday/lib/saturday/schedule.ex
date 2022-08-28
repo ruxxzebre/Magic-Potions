@@ -237,13 +237,12 @@ defmodule Saturday.Schedule do
         date =
           from
           |> Timex.set(
-            hour: date_from_time_rule.start_day_at_hour,
-            minute: 0
+            Enum.into(date_from_time_rule.start_day_at, [])
           )
           |> Timex.shift(days: day)
 
         time_rule = RuleSet.get_time_rule(ruleset, date)
-        hours_amount = time_rule.end_day_at_hour - time_rule.start_day_at_hour
+        hours_amount = time_rule.end_day_at.hour - time_rule.start_day_at.hour
 
         for hour <- 0..hours_amount do
           date = Timex.shift(date, hours: hour)
@@ -307,27 +306,41 @@ defmodule Saturday.Schedule do
     String.match?(date_spec, @spec_regex)
   end
 
-  def date_from_spec(date_spec) do
-    date_spec
-    |> String.split("-")
-    |> Enum.map(&String.split(&1, "."))
-    |> Enum.with_index()
-    |> Enum.reduce(
-      %{year: 0, month: 0, day: 0, minute: 0, hour: 0},
-      fn {curr, index}, acc ->
-        case index do
-          0 ->
-            day = hd(curr)
-            month = hd(tl(curr))
-            year = hd(tl(tl(curr)))
-            %{acc | day: day, month: month, year: year}
+  def date_from_spec(date_spec, to_datetime \\ false)
 
-          1 ->
-            hour = hd(curr)
-            minute = hd(tl(curr))
-            %{acc | hour: hour, minute: minute}
+  def date_from_spec(date_spec, to_datetime) do
+    parsed =
+      date_spec
+      |> String.split("-")
+      |> Enum.map(&String.split(&1, "."))
+      |> Enum.with_index()
+      |> Enum.reduce(
+        %{year: 0, month: 0, day: 0, minute: 0, hour: 0},
+        fn {curr, index}, acc ->
+          case index do
+            0 ->
+              day = hd(curr)
+              month = hd(tl(curr))
+              year = hd(tl(tl(curr)))
+              %{acc | day: day, month: month, year: year}
+
+            1 ->
+              hour = hd(curr)
+              minute = hd(tl(curr))
+              %{acc | hour: hour, minute: minute}
+          end
         end
-      end
-    )
+      )
+
+    if to_datetime do
+      Timex.now()
+      |> Timex.set(
+        parsed
+        |> Enum.map(fn {a, b} -> {a, String.to_integer(b)} end)
+        |> Enum.into([])
+      )
+    else
+      parsed
+    end
   end
 end
