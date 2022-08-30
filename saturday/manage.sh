@@ -81,5 +81,5 @@ handle_passed_args_count
 assign_positional_args 1 "${_positionals[@]}"
 
 DATABASE_PATH=$(pwd)/saturday_dev.db \
-SECRET_KEY_BASE=SECRET_KEY_BASE=$(mix phx.gen.secret) \
+SECRET_KEY_BASE=$(mix phx.gen.secret) \
 _build/prod/rel/production/bin/production $_arg_type
