@@ -152,17 +152,24 @@ defmodule Saturday.Schedule do
   Get generated range of dates starting from `from` till `to`.
   """
   @spec get_range(%DateTime{}, %DateTime{}) :: binary()
-  def get_range(from, to) do
+  def get_range(_from, _to) do
     raise "Not implemented"
   end
 
   @doc """
   Get generated range of dates starting from now.
   """
-  @spec get_range() :: binary()
+  @spec get_range() :: [binary()]
   def get_range do
     generate_range(Saturday.ConfigStorage.get_data(:ruleset))
-    |> Filters.filter_date_by(:sunday?, false)
+    # TODO: somehow includes prev date, research it
+    # |> Filters.filter_date_list_by(:before_today?, positive: false)
+    |> Filters.filter_date_list_by(:batch_filters, optional: [
+      {:sunday?, false},
+      {:before_today?, false},
+      {:between_hours?, false, args: [13, 14]}
+      # {:same_as_today?, false}
+    ])
     |> format_range()
     |> Enum.map(fn {date, %{range: range} = st} ->
       range =
@@ -224,8 +231,6 @@ defmodule Saturday.Schedule do
     generate_range_from_to(from, to, ruleset)
   end
 
-  # TODO: start_day_at_time for precisity
-
   @spec generate_range_from_to(%DateTime{}, %DateTime{}, %RuleSet{}) :: []
   defp generate_range_from_to(from, to, %RuleSet{} = ruleset) do
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
@@ -262,7 +267,7 @@ defmodule Saturday.Schedule do
     return
   end
 
-  defp sort_range(range) do
+  defp sort_range(_range) do
     # range
     # |> Enum.sort(&(Date.compare(&1.date, &2.date) != :lt))
     # |> Enum.sort(&(DateTime.compare(&1.date, &2.date) != :gt))

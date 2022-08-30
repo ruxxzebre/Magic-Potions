@@ -26,21 +26,9 @@ defmodule Saturday.Queue do
   end
 
   @impl true
-  def handle_call({:apply_to_entry, date}, from, state) when is_binary(date) do
-    state = Map.update!(state, :applied_entries, fn entries -> [date | entries] end)
-    broadcast(:applied_entries_updated)
-
-    {:reply, {:ok}, state}
-  end
-
-  @impl true
-  def handle_call({:booked?, date}, _from, state) when is_binary(date) do
-    {:reply, Entries.booked?(date), state}
-  end
-
-  @impl true
   def handle_call({:apply_to_entry, map}, _from, state) do
     require Logger
+
     case Entries.create_entry(map) do
       {:error, _changeset} ->
         Logger.error("Error when creating a new entry.")
@@ -55,6 +43,19 @@ defmodule Saturday.Queue do
         broadcast(:applied_entries_updated)
         {:reply, {:ok}, state}
     end
+  end
+
+  @impl true
+  def handle_call({:apply_to_entry, date}, _from, state) when is_binary(date) do
+    state = Map.update!(state, :applied_entries, fn entries -> [date | entries] end)
+    broadcast(:applied_entries_updated)
+
+    {:reply, {:ok}, state}
+  end
+
+  @impl true
+  def handle_call({:booked?, date}, _from, state) when is_binary(date) do
+    {:reply, Entries.booked?(date), state}
   end
 
   @impl true
