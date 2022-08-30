@@ -6,7 +6,6 @@ RUN mix archive.install hex phx_new
 
 COPY . .
 
-# Set exposed ports
 EXPOSE 5000
 
 ENV HOST_URL=$host
@@ -15,4 +14,4 @@ ENV PORT=5000 MIX_ENV=prod
 RUN ./build.sh
 
 RUN chmod +x run.sh
-CMD ["DATABASE_URL=/db/db.sqlite3", "./run.sh", "start"]
+CMD ["./run.sh", "start"]
