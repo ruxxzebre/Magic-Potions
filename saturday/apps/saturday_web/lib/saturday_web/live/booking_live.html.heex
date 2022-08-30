@@ -11,7 +11,7 @@
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
-            <label class="title is-size-2">Фільтр</label>
+            <label class="title is-size-2 e-font">Фільтр</label>
             <input class="input is-size-3" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
           </div>
         </div>
@@ -27,7 +27,7 @@
             <div class="media-content has-text-centered">
               <%= for {date, %{range: range, localized_date: localized_date}} <- @date_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
-                  <div class="column is-one-third has-text-weight-medium"><%= localized_date %> </div>
+                  <div class="column is-one-third has-text-weight-medium e-font"><%= localized_date %> </div>
                   <div class="column" 
                   >
                     <%= for entry <- range do %>

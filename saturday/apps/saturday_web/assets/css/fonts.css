@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'e-Ukraine-Bold', sans-serif;
+	src: url("/fonts/e-Ukraine-Bold.otf") format("otf");
+}
+
+@font-face {
+	font-family: 'e-Ukraine-Regular', sans-serif;
+	src: url("/fonts/e-Ukraine-Regular.otf") format("otf");
+}
