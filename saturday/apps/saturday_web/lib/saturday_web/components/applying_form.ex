@@ -66,52 +66,52 @@ defmodule SaturdayWeb.ApplyingFormComponent do
   def render(assigns) do
     ~H"""
     <div>
-    <form
-    phx-change="update-form"
-    phx-submit="submit-form"
-    phx-target={@myself}
-    >
-    <div class="field">
-      <label class="label">ПІБ</label>
-      <div class="control">
-        <input class="input"
-        value={@name} type="text" name="name" placeholder="Іванов Іван Іванович">
+      <form
+      phx-change="update-form"
+      phx-submit="submit-form"
+      phx-target={@myself}
+      >
+      <div class="field">
+        <label class="label">ПІБ</label>
+        <div class="control">
+          <input class="input"
+          value={@name} type="text" name="name" placeholder="Іванов Іван Іванович">
+        </div>
       </div>
-    </div>
-    <div class="field">
-      <label class="label">Телефон</label>
-      <div class="control has-icons-left has-icons-right">
-        <input class="input"
-        value={@phone} type="phone" name="phone" placeholder="+380-XX-XX-XX-XXX">
-        <span class="icon is-small is-left">
-          <i class="fas fa-envelope"></i>
-        </span>
-        <span class="icon is-small is-right">
-          <i class="fas fa-exclamation-triangle"></i>
-        </span>
+      <div class="field">
+        <label class="label">Телефон</label>
+        <div class="control has-icons-left has-icons-right">
+          <input class="input"
+          value={@phone} type="phone" name="phone" placeholder="+380-XX-XX-XX-XXX">
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <span class="icon is-small is-right">
+            <i class="fas fa-exclamation-triangle"></i>
+          </span>
+        </div>
       </div>
-    </div>
-    <div class="field">
-      <label class="label">Пошта (опціонально)</label>
-      <div class="control has-icons-left has-icons-right">
-        <input class="input"
-        value={@email} type="email" name="email" placeholder="danger.a@gmail.com">
-        <span class="icon is-small is-left">
-          <i class="fas fa-envelope"></i>
-        </span>
-        <span class="icon is-small is-right">
-          <i class="fas fa-exclamation-triangle"></i>
-        </span>
+      <div class="field">
+        <label class="label">Пошта (опціонально)</label>
+        <div class="control has-icons-left has-icons-right">
+          <input class="input"
+          value={@email} type="email" name="email" placeholder="danger.a@gmail.com">
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <span class="icon is-small is-right">
+            <i class="fas fa-exclamation-triangle"></i>
+          </span>
+        </div>
+        <!-- <p class="help is-danger">This email is invalid</p> -->
       </div>
-      <!-- <p class="help is-danger">This email is invalid</p> -->
-    </div>
-    <div class="field is-grouped">
-      <div class="control">
-        <button type="submit" class="button is-link">Зберегти</button>
+      <div class="field is-grouped">
+        <div class="control">
+          <button type="submit" class="button is-link">Зберегти</button>
+        </div>
       </div>
+      </form>
     </div>
-    </form>
-  </div>
 
     """
   end

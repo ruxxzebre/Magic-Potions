@@ -20,7 +20,7 @@ defmodule Saturday.Schedule.RuleSet do
               |> Timex.set(
                 year: 2022,
                 month: 8,
-                day: 20,
+                day: 1,
                 hour: 0,
                 minute: 0
               ),
@@ -29,7 +29,7 @@ defmodule Saturday.Schedule.RuleSet do
               |> Timex.set(
                 year: 2022,
                 month: 9,
-                day: 20,
+                day: 15,
                 hour: 0,
                 minute: 0
               ),
