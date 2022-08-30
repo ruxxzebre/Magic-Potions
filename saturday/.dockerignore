@@ -1,0 +1,15 @@
+_build
+deps
+assets/node_modules
+test
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+/tmp
+*.db
+*.db-*
+apps/rsl/
