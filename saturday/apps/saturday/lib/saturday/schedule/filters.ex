@@ -57,8 +57,14 @@ defmodule Saturday.Schedule.Filters do
   def satuday?(date), do: nth_day_of_week?(date, 6)
 
   def before_today?(date) do
-    Timex.compare(date, Timex.local(), :day) == -1 ||
-      Timex.compare(date, Timex.local(), :day) == 0
+    # now.year*now.month*now.day > date.year*date.month*date.day
+    Timex.compare(date, Timex.local(), :day) == -1
+    || Timex.compare(date, Timex.local(), :day) == 0
+    || Timex.compare(date, Timex.local(), :days) == -1
+    || Timex.compare(date, Timex.local(), :days) == 0
+    # now.year <= date.year
+    # && now.month <= date.month
+    # && now.day < date.day
   end
 
   def same_as_today?(date) do

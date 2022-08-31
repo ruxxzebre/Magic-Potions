@@ -167,7 +167,7 @@ defmodule Saturday.Schedule do
     |> Filters.filter_date_list_by(:batch_filters, optional: [
       {:sunday?, false},
       {:before_today?, false},
-      {:between_hours?, false, args: [13, 14]}
+      {:between_hours?, false, args: [13, 14]},
       # {:same_as_today?, false}
     ])
     |> format_range()
@@ -195,8 +195,6 @@ defmodule Saturday.Schedule do
       {date, Map.put(st, :range, range)}
     end)
   end
-
-  def get_range_obscure, do: get_range()
 
   def filter_shifted(range, shifted) do
     range
