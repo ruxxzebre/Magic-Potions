@@ -14,15 +14,6 @@ defmodule Saturday.Schedule.MemStorage do
     {:reply, state.range, state}
   end
 
-  def handle_info(:refresh_range, state) do
-    require Logger
-    Logger.info("Refetching range...")
-    # set_range()
-    new_state = Map.put(state, :range, Saturday.Schedule.get_range_obscure())
-    schedule_refresh()
-    {:noreply, new_state}
-  end
-
   def handle_call(:set_range, _from, state) do
     {:reply, nil, state}
   end
@@ -44,6 +35,16 @@ defmodule Saturday.Schedule.MemStorage do
 
     {:reply, state.range, state}
   end
+
+  def handle_info(:refresh_range, state) do
+    require Logger
+    Logger.info("Refetching range...")
+    # set_range()
+    new_state = Map.put(state, :range, Saturday.Schedule.get_range_obscure())
+    schedule_refresh()
+    {:noreply, new_state}
+  end
+
 
   def set_range() do
     GenServer.call(__MODULE__, :set_range)
