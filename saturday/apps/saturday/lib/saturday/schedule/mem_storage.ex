@@ -7,7 +7,7 @@ defmodule Saturday.Schedule.MemStorage do
   end
 
   def init(:ok) do
-    {:ok, %{range: Saturday.Schedule.get_range_obscure()}}
+    {:ok, %{range: Saturday.Schedule.get_range()}}
   end
 
   def handle_call(:get_simplified_range, _from, state) do
@@ -25,9 +25,7 @@ defmodule Saturday.Schedule.MemStorage do
       case state.range do
         [] ->
           Logger.info("Cache is empty. Generating a new one...")
-          Map.put(state, :range, Saturday.Schedule.get_range_obscure())
-          # set_range()
-
+          Map.put(state, :range, Saturday.Schedule.get_range())
         _ ->
           Logger.info("Range is cached. Retrieving...")
           state
@@ -40,7 +38,7 @@ defmodule Saturday.Schedule.MemStorage do
     require Logger
     Logger.info("Refetching range...")
     # set_range()
-    new_state = Map.put(state, :range, Saturday.Schedule.get_range_obscure())
+    new_state = Map.put(state, :range, Saturday.Schedule.get_range())
     schedule_refresh()
     {:noreply, new_state}
   end
