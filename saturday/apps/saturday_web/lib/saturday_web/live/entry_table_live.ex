@@ -25,7 +25,11 @@ defmodule SaturdayWeb.EntryTableLive do
 
   def handle_info({:new_entry_created, _entry}, socket), do: update_table_data(socket)
 
-  def handle_info({:entry_deleted, _entry}, socket), do: update_table_data(socket)
+  def handle_info({:entry_deleted, _entry}, socket) do
+    require Logger
+    Logger.info("ENTRY_TABLE_LIVE: entry_deleted")
+    update_table_data(socket)
+  end
 
   def handle_event("delete_entry", %{"id" => id}, socket) do
     id = String.to_integer(id)
