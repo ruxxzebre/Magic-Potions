@@ -1,4 +1,6 @@
 defmodule Saturday.Schedule.Filters do
+  alias Saturday.Datum
+
   def filter_weekends(date_list) do
     filter_date_list_by(date_list, :sunday?, false)
   end
@@ -48,7 +50,9 @@ defmodule Saturday.Schedule.Filters do
     after_hour?(date, n1) && before_hour?(date, n2)
   end
 
-  def nth_day_of_week?(date, n), do: Timex.local(date) |> Timex.weekday() == n
+  def nth_day_of_week?(date, n) do
+    date |> Timex.weekday() == n
+  end
 
   def sunday?(date), do: nth_day_of_week?(date, 7)
 
@@ -57,26 +61,22 @@ defmodule Saturday.Schedule.Filters do
   def satuday?(date), do: nth_day_of_week?(date, 6)
 
   def before_today?(date) do
-    # now.year*now.month*now.day > date.year*date.month*date.day
-    # Timex.compare(date |> Timex.to_datetime("Europe/Kiev"), Timex.local(), :day) == -1
-    # IO.inspect("BEFORE TODAY: #{inspect(date)}---:---#{inspect(Timex.local())} COMP: #{inspect(Timex.compare(date, Timex.local(), :day))}")
-    # Timex.compare(date, Timex.local(), :days) == 0
-    # loc = Timex.local()
-
-    # date.year == loc.year
-    # && date.month == loc.month
-    # && date.day < loc.day
-    # Timex.compare(date, Timex.local(), :days) == -1
-    Timex.compare(date, Timex.local() |> Timex.set(hour: 23, minute: 59)) <= 0
-    # to_specific_timestamp(date) < to_specific_timestamp(Timex.local())
+    Timex.compare(
+      date,
+      Datum.now()
+      |> Timex.set(hour: 23, minute: 59)
+    ) < 0
   end
 
   defp to_specific_timestamp(date) do
-    date.year*10000 + (date.month*100) + (date.day)
+    date.year * 10000 + date.month * 100 + date.day
   end
 
   def same_as_today?(date) do
-    loc = Timex.local()
+    loc =
+      Datum.now()
+      |> Timex.set(hour: 23, minute: 59)
+
     date.day == loc.day && date.month == loc.month && date.year == loc.year
   end
 
@@ -88,7 +88,8 @@ defmodule Saturday.Schedule.Filters do
           if filter_date_by(
                date,
                filter,
-               [positive: positive, args: args]
+               positive: positive,
+               args: args
              ) == true,
              do: 1,
              else: 0

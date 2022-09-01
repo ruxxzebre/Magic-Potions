@@ -48,6 +48,8 @@ defmodule Saturday.Schedule.MemStorage do
   end
 
   defp schedule_refresh() do
+    require Logger
+    Logger.info("Refreshing range...")
     Process.send_after(self(), :refresh_range, :timer.minutes(60))
   end
 

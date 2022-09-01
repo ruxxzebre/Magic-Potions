@@ -91,7 +91,7 @@ defmodule Saturday.Schedule.RuleSet do
 
     time_rules =
       rs.time_rules
-      |> Map.update(:specific, rs.time_rules.specific, fn val ->
+      |> Map.update(:specific, rs.time_rules.specific, fn rules ->
         [
           %TimeRuleSet{
             date: Datum.new_date(2022, 9, 2),
@@ -105,7 +105,7 @@ defmodule Saturday.Schedule.RuleSet do
             },
             minute_interval: 15
           }
-          | val
+          | rules
         ]
       end)
 
