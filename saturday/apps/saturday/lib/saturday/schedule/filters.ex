@@ -62,9 +62,12 @@ defmodule Saturday.Schedule.Filters do
     || Timex.compare(date, Timex.local(), :day) == 0
     || Timex.compare(date, Timex.local(), :days) == -1
     || Timex.compare(date, Timex.local(), :days) == 0
-    # now.year <= date.year
-    # && now.month <= date.month
-    # && now.day < date.day
+
+    # to_specific_timestamp(date) <= to_specific_timestamp(Timex.local())
+  end
+
+  defp to_specific_timestamp(date) do
+    date.year*10000 + (date.month*100) + (date.day)
   end
 
   def same_as_today?(date) do
