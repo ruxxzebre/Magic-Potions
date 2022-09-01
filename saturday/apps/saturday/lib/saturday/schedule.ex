@@ -263,6 +263,9 @@ defmodule Saturday.Schedule do
     # |> sort_range()
 
     return
+    |> Enum.filter(fn el ->
+      not RuleSet.excluded?(ruleset, el.date)
+    end)
   end
 
   defp sort_range(_range) do

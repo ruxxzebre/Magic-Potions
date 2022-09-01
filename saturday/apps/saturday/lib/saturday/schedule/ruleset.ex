@@ -33,6 +33,10 @@ defmodule Saturday.Schedule.RuleSet do
                 hour: 0,
                 minute: 0
               ),
+            date_rules: %{
+              exclude: [
+              ]
+            },
             time_rules: %{
               specific: [
                 %TimeRuleSet{
@@ -73,8 +77,33 @@ defmodule Saturday.Schedule.RuleSet do
               }
             }
 
+  def new_default_ruleset() do
+    alias Saturday.Datum
+
+    date_rules = %{
+      exclude: [
+        Datum.new_date(2022, 9, 3)
+      ]
+    }
+
+    %RuleSet{}
+    |> Map.put(:date_from, Datum.new_date(2022, 9, 1, 0, 0))
+    |> Map.put(:date_to, Datum.new_date(2022, 9, 15, 0, 0))
+    |> Map.put(:date_rules, date_rules)
+  end
+
+  def excluded?(ruleset, date) do
+    exclude_rules = ruleset.date_rules.exclude
+
+    exclude_rules
+    |> Enum.reduce(0, fn (el, acc) ->
+      flag = date.year == el.year && date.month == el.month && date.day == el.day
+      acc + (if flag, do: 1, else: 0)
+    end) > 0
+  end
+
   @spec get_time_rule(%RuleSet{}, %DateTime{}) :: %TimeRuleSet{}
-  def get_time_rule(%RuleSet{} = ruleset, %DateTime{} = date) do
+  def get_time_rule(ruleset, %DateTime{} = date) do
     rule = find_time_rule(ruleset.time_rules.specific, date)
 
     if rule == [] do

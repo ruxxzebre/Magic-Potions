@@ -11,7 +11,7 @@ defmodule Saturday.Application do
 
     Saturday.ConfigStorage.set_data(
       :ruleset,
-      %Saturday.Schedule.RuleSet{}
+      Saturday.Schedule.RuleSet.new_default_ruleset()
     )
 
     children = [
