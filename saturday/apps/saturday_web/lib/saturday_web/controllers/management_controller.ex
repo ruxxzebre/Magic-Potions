@@ -19,11 +19,11 @@ defmodule SaturdayWeb.ManagementController do
     end
   end
 
-  def index(conn, %{"table" => _}) do
-    render(conn, "index.html", render_table: true)
+  def index(conn, %{"table" => "hide"} = params) do
+    render(conn, "index.html", render_table: false)
   end
 
   def index(conn, _params) do
-    render(conn, "index.html", render_table: false)
+    render(conn, "index.html", render_table: true)
   end
 end

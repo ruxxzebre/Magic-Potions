@@ -20,5 +20,5 @@ defmodule SaturdayWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :saturday_web
+  use Gettext, otp_app: :saturday_web, default_locale: "uk"
 end
