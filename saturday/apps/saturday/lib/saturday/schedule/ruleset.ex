@@ -13,8 +13,8 @@ defmodule Saturday.Schedule.RuleSet.TimeRuleSet do
 end
 
 defmodule Saturday.Schedule.RuleSet do
-  alias Saturday.Schedule.RuleSet.TimeRuleSet
   alias Saturday.Schedule.RuleSet
+  alias Saturday.Schedule.RuleSet.TimeRuleSet
 
   defstruct date_from:
               Timex.now()
