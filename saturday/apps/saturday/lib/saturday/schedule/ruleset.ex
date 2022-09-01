@@ -13,27 +13,12 @@ defmodule Saturday.Schedule.RuleSet.TimeRuleSet do
 end
 
 defmodule Saturday.Schedule.RuleSet do
+  alias Saturday.Datum
   alias Saturday.Schedule.RuleSet
   alias Saturday.Schedule.RuleSet.TimeRuleSet
 
-  defstruct date_from:
-              Timex.now()
-              |> Timex.set(
-                year: 2022,
-                month: 8,
-                day: 1,
-                hour: 0,
-                minute: 0
-              ),
-            date_to:
-              Timex.now()
-              |> Timex.set(
-                year: 2022,
-                month: 9,
-                day: 15,
-                hour: 0,
-                minute: 0
-              ),
+  defstruct date_from: nil,
+            date_to: nil,
             date_rules: %{
               exclude: []
             },
@@ -111,7 +96,7 @@ defmodule Saturday.Schedule.RuleSet do
 
     rs
     |> Map.put(:date_from, Datum.new_date(2022, 9, 1, 0, 0))
-    |> Map.put(:date_to, Datum.new_date(2022, 9, 15, 0, 0))
+    |> Map.put(:date_to, Datum.new_date(2022, 10, 15, 0, 0))
     |> Map.put(:date_rules, date_rules)
     |> Map.put(:time_rules, time_rules)
   end
