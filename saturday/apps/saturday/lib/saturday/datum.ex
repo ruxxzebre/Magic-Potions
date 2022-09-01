@@ -42,4 +42,19 @@ defmodule Saturday.Datum do
     {:ok, time} = Time.new(hour, minute, 0, 0)
     time
   end
+
+  def cut_time(date) do
+    new_date(date.year, date.month, date.day)
+  end
+
+  def comp_pure_dates(d1, d2) do
+    cond do
+      d1 == nil -> false
+      d2 == nil -> false
+      true ->
+        date = d1
+        el = d2
+        date.year == el.year && date.month == el.month && date.day == el.day
+    end
+  end
 end

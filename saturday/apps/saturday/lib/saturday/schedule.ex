@@ -246,11 +246,12 @@ defmodule Saturday.Schedule do
 
         time_rule = RuleSet.get_time_rule(ruleset, date)
         hours_amount = time_rule.end_day_at.hour - time_rule.start_day_at.hour
+        entries_per_hour = trunc(60 / time_rule.minute_interval)
 
-        for hour <- 0..hours_amount do
+        for hour <- 0..(hours_amount) do
           date = Timex.shift(date, hours: hour)
 
-          for minute <- 0..(@entries_per_hour - 1) do
+          for minute <- 0..(entries_per_hour - 1) do
             %{
               date: Timex.shift(date, minutes: minute * @interval),
               booked: false

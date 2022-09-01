@@ -1,5 +1,6 @@
 defmodule Saturday.Schedule.RuleSet.TimeRuleSet do
   defstruct day_of_week: 0,
+            date: nil,
             minute_interval: 0,
             start_day_at: %{
               hour: 0,
@@ -79,6 +80,9 @@ defmodule Saturday.Schedule.RuleSet do
 
   def new_default_ruleset() do
     alias Saturday.Datum
+    alias Saturday.Schedule.RuleSet.TimeRuleSet
+
+    rs = %RuleSet{}
 
     date_rules = %{
       exclude: [
@@ -86,10 +90,28 @@ defmodule Saturday.Schedule.RuleSet do
       ]
     }
 
-    %RuleSet{}
+    time_rules =
+      rs.time_rules
+      |> Map.update(:specific, rs.time_rules.specific, fn val ->
+        [%TimeRuleSet{
+          date: Datum.new_date(2022, 9, 2),
+          start_day_at: %{
+            hour: 9,
+            minute: 0
+          },
+          end_day_at: %{
+            hour: 14,
+            minute: 0
+          },
+          minute_interval: 15
+        } | val]
+      end)
+
+    rs
     |> Map.put(:date_from, Datum.new_date(2022, 9, 1, 0, 0))
     |> Map.put(:date_to, Datum.new_date(2022, 9, 15, 0, 0))
     |> Map.put(:date_rules, date_rules)
+    |> Map.put(:time_rules, time_rules)
   end
 
   def excluded?(ruleset, date) do
@@ -105,6 +127,7 @@ defmodule Saturday.Schedule.RuleSet do
   @spec get_time_rule(%RuleSet{}, %DateTime{}) :: %TimeRuleSet{}
   def get_time_rule(ruleset, %DateTime{} = date) do
     rule = find_time_rule(ruleset.time_rules.specific, date)
+    IO.inspect("TIME_RULES: #{inspect(ruleset.time_rules.specific)}")
 
     if rule == [] do
       ruleset.time_rules.fallback
@@ -114,14 +137,14 @@ defmodule Saturday.Schedule.RuleSet do
   end
 
   defp find_time_rule([head | tail], %DateTime{} = date) do
-    if Timex.weekday(date) == head.day_of_week do
-      head
-    else
-      if tail == [] do
-        []
-      else
-        find_time_rule(tail, date)
-      end
+    alias Saturday.Datum
+
+    cond do
+      Datum.comp_pure_dates(date, head.date) ->
+        head
+      Timex.weekday(date) == head.day_of_week -> head
+      tail == [] -> []
+      true -> find_time_rule(tail, date)
     end
   end
 

@@ -58,12 +58,17 @@ defmodule Saturday.Schedule.Filters do
 
   def before_today?(date) do
     # now.year*now.month*now.day > date.year*date.month*date.day
-    Timex.compare(date, Timex.local(), :day) == -1
-    || Timex.compare(date, Timex.local(), :day) == 0
-    || Timex.compare(date, Timex.local(), :days) == -1
-    || Timex.compare(date, Timex.local(), :days) == 0
+    # Timex.compare(date |> Timex.to_datetime("Europe/Kiev"), Timex.local(), :day) == -1
+    # IO.inspect("BEFORE TODAY: #{inspect(date)}---:---#{inspect(Timex.local())} COMP: #{inspect(Timex.compare(date, Timex.local(), :day))}")
+    # Timex.compare(date, Timex.local(), :days) == 0
+    # loc = Timex.local()
 
-    # to_specific_timestamp(date) <= to_specific_timestamp(Timex.local())
+    # date.year == loc.year
+    # && date.month == loc.month
+    # && date.day < loc.day
+    # Timex.compare(date, Timex.local(), :days) == -1
+    Timex.compare(date, Timex.local() |> Timex.set(hour: 23, minute: 59)) <= 0
+    # to_specific_timestamp(date) < to_specific_timestamp(Timex.local())
   end
 
   defp to_specific_timestamp(date) do
@@ -71,7 +76,8 @@ defmodule Saturday.Schedule.Filters do
   end
 
   def same_as_today?(date) do
-    Timex.compare(date, Timex.local(), :day) == 0
+    loc = Timex.local()
+    date.day == loc.day && date.month == loc.month && date.year == loc.year
   end
 
   def batch_filters(date, filters) do
