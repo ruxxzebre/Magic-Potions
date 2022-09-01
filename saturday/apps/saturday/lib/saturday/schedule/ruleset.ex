@@ -35,8 +35,7 @@ defmodule Saturday.Schedule.RuleSet do
                 minute: 0
               ),
             date_rules: %{
-              exclude: [
-              ]
+              exclude: []
             },
             time_rules: %{
               specific: [
@@ -93,18 +92,21 @@ defmodule Saturday.Schedule.RuleSet do
     time_rules =
       rs.time_rules
       |> Map.update(:specific, rs.time_rules.specific, fn val ->
-        [%TimeRuleSet{
-          date: Datum.new_date(2022, 9, 2),
-          start_day_at: %{
-            hour: 9,
-            minute: 0
-          },
-          end_day_at: %{
-            hour: 14,
-            minute: 0
-          },
-          minute_interval: 15
-        } | val]
+        [
+          %TimeRuleSet{
+            date: Datum.new_date(2022, 9, 2),
+            start_day_at: %{
+              hour: 9,
+              minute: 0
+            },
+            end_day_at: %{
+              hour: 14,
+              minute: 0
+            },
+            minute_interval: 15
+          }
+          | val
+        ]
       end)
 
     rs
@@ -116,9 +118,9 @@ defmodule Saturday.Schedule.RuleSet do
 
   def excluded?(ruleset, date) do
     ruleset.date_rules.exclude
-    |> Enum.reduce(0, fn (el, acc) ->
+    |> Enum.reduce(0, fn el, acc ->
       flag = date.year == el.year && date.month == el.month && date.day == el.day
-      acc + (if flag, do: 1, else: 0)
+      acc + if flag, do: 1, else: 0
     end) > 0
   end
 
@@ -139,9 +141,15 @@ defmodule Saturday.Schedule.RuleSet do
     cond do
       Datum.comp_pure_dates(date, head.date) ->
         head
-      Timex.weekday(date) == head.day_of_week -> head
-      tail == [] -> []
-      true -> find_time_rule(tail, date)
+
+      Timex.weekday(date) == head.day_of_week ->
+        head
+
+      tail == [] ->
+        []
+
+      true ->
+        find_time_rule(tail, date)
     end
   end
 
@@ -166,15 +174,16 @@ defmodule Saturday.Schedule.RuleSet do
     # IO.puts("date.minute*date.hour >= time_rule.start_day_at.minute #{date.hour >= time_rule.start_day_at.minute}")
     # IO.puts("date.minute*date.hour <= time_rule.end_day_at.minute #{date.hour <= time_rule.end_day_at.minute}")
 
-    %{ start_day_at: start_day_at, end_day_at: end_day_at } = time_rule
+    %{start_day_at: start_day_at, end_day_at: end_day_at} = time_rule
 
     (comp_date_from == -1 || comp_date_from == 0) &&
       (comp_date_to == 1 || comp_date_to == 0) &&
       zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i)
-      date.hour >= start_day_at.hour &&
+
+    date.hour >= start_day_at.hour &&
       date.hour <= end_day_at.hour &&
-      date.minute + date.hour*60 >= start_day_at.minute + start_day_at.hour*60 &&
-      date.minute + date.hour*60 <= end_day_at.minute + end_day_at.hour*60
+      date.minute + date.hour * 60 >= start_day_at.minute + start_day_at.hour * 60 &&
+      date.minute + date.hour * 60 <= end_day_at.minute + end_day_at.hour * 60
   end
 
   def is_zero(number) when is_number(number) do
