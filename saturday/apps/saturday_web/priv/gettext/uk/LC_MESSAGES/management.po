@@ -1,0 +1,17 @@
+msgid "management-panel"
+msgstr "Панель Адміністратора"
+
+msgid "show-report"
+msgstr "Показати таблицю"
+
+msgid "hide-report"
+msgstr "Сховати таблицю"
+
+msgid "download-report"
+msgstr "Завантажити таблицю (Excel XLSX)"
+
+msgid "dashboard"
+msgstr "Монітор ресурсів"
+
+msgid "logout"
+msgstr "Вийти із панелі адміністратора"

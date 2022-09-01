@@ -115,9 +115,7 @@ defmodule Saturday.Schedule.RuleSet do
   end
 
   def excluded?(ruleset, date) do
-    exclude_rules = ruleset.date_rules.exclude
-
-    exclude_rules
+    ruleset.date_rules.exclude
     |> Enum.reduce(0, fn (el, acc) ->
       flag = date.year == el.year && date.month == el.month && date.day == el.day
       acc + (if flag, do: 1, else: 0)
@@ -127,7 +125,6 @@ defmodule Saturday.Schedule.RuleSet do
   @spec get_time_rule(%RuleSet{}, %DateTime{}) :: %TimeRuleSet{}
   def get_time_rule(ruleset, %DateTime{} = date) do
     rule = find_time_rule(ruleset.time_rules.specific, date)
-    IO.inspect("TIME_RULES: #{inspect(ruleset.time_rules.specific)}")
 
     if rule == [] do
       ruleset.time_rules.fallback

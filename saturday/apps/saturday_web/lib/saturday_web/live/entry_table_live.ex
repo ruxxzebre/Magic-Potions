@@ -2,7 +2,6 @@ defmodule SaturdayWeb.EntryTableLive do
   use SaturdayWeb, :live_view
 
   alias Saturday.Entries
-  # alias Saturday.Entries.Entry
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Entries.subscribe()

@@ -1,0 +1,17 @@
+msgid "management-panel"
+msgstr "Management panel"
+
+msgid "show-report"
+msgstr "Show Report"
+
+msgid "hide-report"
+msgstr "Hide Report"
+
+msgid "download-report"
+msgstr "Download Report (Excel XLSX)"
+
+msgid "dashboard"
+msgstr "Dashboard (resource monitor)"
+
+msgid "logout"
+msgstr "Logout"

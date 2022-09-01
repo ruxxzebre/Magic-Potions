@@ -1,10 +1,10 @@
-<h1>Management Panel</h1>
-<a class="button is-success" href={"/management#{unless @render_table, do: "?table"}"}>
-	<%= unless @render_table, do: "Show", else: "Hide" %> Report
+<h1><%= dgettext("management", "management-panel") %></h1>
+<a class="button is-success" href={"/management#{if @render_table, do: "?table=hide", else: ""}"}>
+  <%= dgettext("management", "hide-report") %>
 </a>
-<a href="/management/download_report" class="button">Download Report</a>
-<a href="/dashboard/home" class="button is-info">Dashboard</a>
-<a href="/users/log_out" class="button is-danger">Log Out</a>
+<a href="/management/download_report" class="button"><%= dgettext("management", "download-report") %></a>
+<a href="/dashboard/home" class="button is-info"><%= dgettext("management", "dashboard") %></a>
+<a href="/users/log_out" class="button is-danger"><%= dgettext("management", "logout") %></a>
 <%= if @render_table do %>
 	<%= live_render @conn, SaturdayWeb.EntryTableLive %>
 <% end %>
