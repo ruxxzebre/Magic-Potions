@@ -30,12 +30,12 @@
                   <div class="column is-one-third has-text-weight-medium e-font"><%= localized_date %> </div>
                   <div class="column" 
                   >
-                    <%= for entry <- range do %>
-                      <%= live_patch render_entry_button(%{entry: entry}),
+                    <%= for date <- range do %>
+                      <%= live_patch render_entry_button(%{date: date}),
                       to: Routes.booking_path(
                         @socket, 
                         :new,
-                        datetime: Schedule.date_to_spec(entry.date)
+                        datetime: Schedule.date_to_spec(date)
                       ) 
                       %>
                     <% end %>

@@ -9,13 +9,11 @@ defmodule Saturday.Datum do
   # @timezone_db Tzdata.TimeZoneDatabase
 
   def now() do
-    Timex.now()
-    |> Timex.to_datetime(@default_timezone)
+    Timex.now(@default_timezone)
   end
 
   def local(date) do
-    date
-    |> Timex.to_datetime(@default_timezone)
+    Timex.now(@default_timezone)
   end
 
   def new_date([year, month, day]) do
@@ -28,20 +26,24 @@ defmodule Saturday.Datum do
 
   def new_date(year, month, day, hour, minute) do
     date = new_date(year, month, day)
-    time = new_time(hour, minute)
+    # time = new_time(hour, minute)
 
-    case DateTime.new(
-      date,
-      time
-    ) do
-      {:ok, datetime} -> datetime |> Timex.to_datetime(@default_timezone)
-      # {:error, error} -> Logger.error("Error while creating a new date: #{inspect(error)}")
-    end
+    date
+    |> Timex.set(
+      hour: hour,
+      minute: minute
+    )
   end
 
   def new_date(year, month, day) do
     {:ok, date} = Date.new(year, month, day)
     date
+    |> Timex.to_datetime(@default_timezone)
+    |> Timex.set(
+      year: year,
+      month: month,
+      day: day
+    )
   end
 
   def new_time([hour, minute]) do

@@ -93,15 +93,16 @@ defmodule Saturday.Schedule do
 
   def format_range(range) do
     range
-    |> Enum.reduce(%{}, fn elem, acc ->
-      fom = Timex.format!(elem.date, "{YYYY}-{0M}-{0D}")
-      Map.put(acc, fom, Map.get(acc, fom, []) ++ [elem])
+    |> Enum.reduce(%{}, fn date, acc ->
+      fom = Timex.format!(date, "{YYYY}-{0M}-{0D}")
+      Map.put(acc, fom, Map.get(acc, fom, []) ++ [date])
     end)
     |> Enum.map(fn {date, range} ->
       parsed = Timex.parse!(date, "{YYYY}-{0M}-{0D}")
 
       {date,
        %{
+         date_struct: parsed,
          range: range,
          localized_date: format_date!(date),
          date_forms: [
@@ -109,6 +110,9 @@ defmodule Saturday.Schedule do
            Timex.format!(parsed, "{0D}.{0M}.{YYYY}")
          ]
        }}
+    end)
+    |> Enum.sort(fn {_, %{date_struct: d1}}, {_, %{date_struct: d2}} ->
+      Timex.compare(d1, d2) == -1
     end)
   end
 
@@ -125,8 +129,7 @@ defmodule Saturday.Schedule do
         |> Map.put(
           :range,
           range
-          |> Enum.filter(fn entry ->
-            date = entry.date
+          |> Enum.filter(fn date ->
             date_to_spec(date) not in exclude_dates
           end)
         )
@@ -155,7 +158,7 @@ defmodule Saturday.Schedule do
   def get_range do
     generate_range(Saturday.ConfigStorage.get_data(:ruleset))
     # TODO: somehow includes prev date, research it
-    # * another usecase |> Filters.filter_date_list_by(:before_today?, positive: false)
+    # |> Filters.filter_date_list_by(:before_today?, positive: false)
     |> Filters.filter_date_list_by(:batch_filters,
       optional: [
         {:sunday?, false},
@@ -165,29 +168,6 @@ defmodule Saturday.Schedule do
       ]
     )
     |> format_range()
-    |> Enum.map(fn {date, %{range: range} = st} ->
-      range =
-        range
-        |> Enum.filter(fn %{date: date} ->
-          a = date
-
-          cond do
-            Filters.friday?(a) && a.hour >= 16 && a.minute >= 45 ->
-              false
-
-            Filters.satuday?(a) && a.hour >= 14 ->
-              false
-
-            a.hour >= 18 ->
-              false
-
-            true ->
-              true
-          end
-        end)
-
-      {date, Map.put(st, :range, range)}
-    end)
   end
 
   def filter_shifted(range, shifted) do
@@ -271,20 +251,15 @@ defmodule Saturday.Schedule do
           date = Timex.shift(date, hours: hour)
 
           for minute <- 0..(entries_per_hour - 1) do
-            %{
-              date: Timex.shift(date, minutes: minute * @interval),
-              booked: false
-            }
+            Timex.shift(date, minutes: minute * @interval)
           end
         end
       end
       |> List.flatten()
 
-    # |> sort_range()
-
     return
-    |> Enum.filter(fn el ->
-      not RuleSet.excluded?(ruleset, el.date)
+    |> Enum.filter(fn date ->
+      not RuleSet.excluded?(ruleset, date)
     end)
   end
 
