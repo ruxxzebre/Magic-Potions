@@ -37,7 +37,6 @@ defmodule Saturday.Schedule.MemStorage do
   def handle_info(:refresh_range, state) do
     require Logger
     Logger.info("Refetching range...")
-    # set_range()
     new_state = Map.put(state, :range, Saturday.Schedule.get_range())
     schedule_refresh()
     {:noreply, new_state}
@@ -54,5 +53,12 @@ defmodule Saturday.Schedule.MemStorage do
 
   def get_range() do
     GenServer.call(__MODULE__, :get_range)
+  end
+
+  def code_change(_old_vsn, state) do
+    require Logger
+    Logger.info("MEM_STORAGE CODE-CHANGE")
+    state = Map.put(state, :range, Saturday.Schedule.get_range())
+    {:ok, state}
   end
 end
