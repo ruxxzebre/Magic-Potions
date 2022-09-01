@@ -168,7 +168,7 @@ defmodule Saturday.Schedule do
       {:sunday?, false},
       {:before_today?, false},
       {:between_hours?, false, args: [13, 14]},
-      # {:same_as_today?, false}
+      {:same_as_today?, false}
     ])
     |> format_range()
     |> Enum.map(fn {date, %{range: range} = st} ->
