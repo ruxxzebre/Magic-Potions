@@ -8,6 +8,16 @@ defmodule Saturday.Datum do
   @default_timezone "Europe/Kiev"
   # @timezone_db Tzdata.TimeZoneDatabase
 
+  def now() do
+    Timex.now()
+    |> Timex.to_datetime(@default_timezone)
+  end
+
+  def local(date) do
+    date
+    |> Timex.to_datetime(@default_timezone)
+  end
+
   def new_date([year, month, day]) do
     new_date(year, month, day)
   end

@@ -149,27 +149,21 @@ defmodule Saturday.Schedule do
   end
 
   @doc """
-  Get generated range of dates starting from `from` till `to`.
-  """
-  @spec get_range(%DateTime{}, %DateTime{}) :: binary()
-  def get_range(_from, _to) do
-    raise "Not implemented"
-  end
-
-  @doc """
   Get generated range of dates starting from now.
   """
   @spec get_range() :: [binary()]
   def get_range do
     generate_range(Saturday.ConfigStorage.get_data(:ruleset))
     # TODO: somehow includes prev date, research it
-    # |> Filters.filter_date_list_by(:before_today?, positive: false)
-    |> Filters.filter_date_list_by(:batch_filters, optional: [
-      {:sunday?, false},
-      {:before_today?, false},
-      {:between_hours?, false, args: [13, 14]},
-      {:same_as_today?, false}
-    ])
+    # * another usecase |> Filters.filter_date_list_by(:before_today?, positive: false)
+    |> Filters.filter_date_list_by(:batch_filters,
+      optional: [
+        {:sunday?, false},
+        {:before_today?, false},
+        {:between_hours?, false, args: [13, 14]},
+        {:same_as_today?, false}
+      ]
+    )
     |> format_range()
     |> Enum.map(fn {date, %{range: range} = st} ->
       range =
@@ -229,6 +223,33 @@ defmodule Saturday.Schedule do
     generate_range_from_to(from, to, ruleset)
   end
 
+  def generate_range_from_to2(%Date{} = from, %Date{} = to, %RuleSet{} = ruleset) do
+    from = Timex.to_datetime(from)
+    to = Timex.to_datetime(to)
+    generate_range_from_to2(from, to, ruleset)
+  end
+
+  def generate_range_from_to2(%DateTime{} = from, %DateTime{} = to, %RuleSet{} = ruleset) do
+    r = ruleset
+  end
+
+  defp gen_range_rec(
+    from,
+    to,
+    %RuleSet{} = ruleset,
+    current_date \\ nil,
+    buf \\ []
+  ) do
+    # alias Saturday.Datum
+    current_date = if current_date == nil, do: from, else: current_date
+
+    minute_interval = 2
+    date = current_date |> Timex.shift(minutes: minute_interval)
+    time_rule = RuleSet.get_time_rule(ruleset, date)
+
+    gen_range_rec(date, from, to, [date | buf])
+  end
+
   @spec generate_range_from_to(%DateTime{}, %DateTime{}, %RuleSet{}) :: []
   defp generate_range_from_to(from, to, %RuleSet{} = ruleset) do
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
@@ -239,16 +260,14 @@ defmodule Saturday.Schedule do
       for day <- 0..days_amount do
         date =
           from
-          |> Timex.set(
-            Enum.into(date_from_time_rule.start_day_at, [])
-          )
+          |> Timex.set(Enum.into(date_from_time_rule.start_day_at, []))
           |> Timex.shift(days: day)
 
         time_rule = RuleSet.get_time_rule(ruleset, date)
         hours_amount = time_rule.end_day_at.hour - time_rule.start_day_at.hour
         entries_per_hour = trunc(60 / time_rule.minute_interval)
 
-        for hour <- 0..(hours_amount) do
+        for hour <- 0..hours_amount do
           date = Timex.shift(date, hours: hour)
 
           for minute <- 0..(entries_per_hour - 1) do
