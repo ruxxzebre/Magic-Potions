@@ -4,7 +4,6 @@ defmodule SaturdayWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <h1 hidden="true" class="navbar-item"><%= # dgettext("management", "management-panel") %></h1>
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
