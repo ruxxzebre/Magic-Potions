@@ -164,12 +164,11 @@ defmodule SaturdayWeb.BookingLive do
     <div
     data-target="create-entry-modal"
     _phx-click="apply-to-entry"
-    _phx-value-datetime={Schedule.date_to_spec(@entry.date)}
-    id={"date-entry-#{@entry.date}"}
+    _phx-value-datetime={Schedule.date_to_spec(@date)}
+    id={"date-entry-#{@date}"}
     class="is-inline-block js-modal-trigger">
-      <button class={"button #{if @entry.booked, do: "is-light", else: ""}"}
-      disabled={@entry.booked}
-      ><%= Schedule.format_time(@entry.date) %></button>
+      <button class={"button"}
+      ><%= Schedule.format_time(@date) %></button>
     </div>
     """
   end
