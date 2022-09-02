@@ -33,7 +33,7 @@ defmodule Saturday.Schedule.Filters do
 
   def filter_date_list_by(date_list, fun, args \\ []) when is_atom(fun) do
     date_list
-    |> Enum.filter(fn %{date: date} ->
+    |> Enum.filter(fn date ->
       filter_date_by(date, fun, args)
     end)
   end

@@ -1,3 +1,9 @@
+msgid "open-management-panel"
+msgstr "Відкрити Панель Адміністратора"
+
+msgid "open-booking-page"
+msgstr "Відкрити сторінку черги"
+
 msgid "management-panel"
 msgstr "Панель Адміністратора"
 

@@ -31,7 +31,11 @@ defmodule Saturday.Entries do
         date = Saturday.Schedule.date_from_spec(date)
         Saturday.Schedule.format_date!(date, with_time: true)
       end)
-      |> Map.update!(:inserted_at, &Saturday.Schedule.format_date!/1)
+      |> Map.update!(:inserted_at, fn date ->
+        date
+        |> Saturday.Datum.naive_to_datetime()
+        |> Saturday.Schedule.format_date!()
+      end)
       |> Map.put(:email, string_to_map(entry.misc) |> Map.get("email", entry.misc))
     end)
   end
