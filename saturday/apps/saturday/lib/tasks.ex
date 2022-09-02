@@ -22,6 +22,8 @@ defmodule Mix.Tasks.CreateAdmin do
       raise "Email and Password options should be passed!"
     end
 
+    connect_to_db()
+
     require Logger
 
     {:ok, user} = Accounts.register_user(%{
