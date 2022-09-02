@@ -9,7 +9,6 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
-    <%# <a href="https://phoenixframework.org/" class="phx-logo"> %>
   </head>
   <body>
     <div>
@@ -21,29 +20,7 @@
         </div>
         <div class="navbar-menu">
           <%= if @current_user do %>
-            <h1 hidden="true" class="navbar-item"><%= # dgettext("management", "management-panel") %></h1>
-            <div class="navbar-end">
-              <div class="navbar-item">
-                <div class="buttons">
-                  <%= if @conn.path_info do %>
-                    <%= if List.first(@conn.path_info) == "booking" do %>
-                      <a 
-                        href={"/management"}
-                        class="button is-warning"><%= dgettext("management", "open-management-panel") %>
-                      </a>
-                    <% else %>
-                      <a 
-                        href={"/booking"}
-                        class="button is-warning"><%= dgettext("management", "open-booking-page") %>
-                      </a>
-                    <% end %>
-                  <% end %>
-                  <a href="/management/download_report" class="button is-primary"><%= dgettext("management", "download-report") %></a>
-                  <a href="/dashboard/home" class="button is-info"><%= dgettext("management", "dashboard") %></a>
-                  <a href="/users/log_out" class="button is-danger"><%= dgettext("management", "logout") %></a>
-                </div>
-              </div>
-            </div>
+            <SaturdayWeb.CoreComponents.header current_path={List.first(@conn.path_info)} />
           <% else %>
           <div class="navbar-end">
             <div class="navbar-item">Привіт!</div>
