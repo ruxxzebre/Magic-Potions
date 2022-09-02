@@ -6,7 +6,6 @@ defmodule Saturday.Datum do
   require Logger
 
   @default_timezone "Europe/Kiev"
-  # @timezone_db Tzdata.TimeZoneDatabase
 
   def to_local(date), do: date |> Timex.to_datetime(@default_timezone)
 
