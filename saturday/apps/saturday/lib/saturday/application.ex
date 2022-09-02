@@ -15,14 +15,14 @@ defmodule Saturday.Application do
     )
 
     children = [
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Saturday.PubSub},
       # Start the Ecto repository
       Saturday.Repo,
       # Start the Queue agent.
-      # Should be initialized after Ecto (Sqturday.Repo), 'cause module depends on it
+      # Should be initialized after Ecto (Saturday.Repo) and PubSUb, 'cause module depends on it
       Saturday.Queue,
-      Saturday.Schedule.MemStorage,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: Saturday.PubSub}
+      Saturday.Schedule.MemStorage
       # Start a worker by calling: Saturday.Worker.start_link(arg)
       # {Saturday.Worker, arg}
     ]
