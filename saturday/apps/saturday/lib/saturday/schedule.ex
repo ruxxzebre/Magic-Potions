@@ -156,9 +156,7 @@ defmodule Saturday.Schedule do
   """
   @spec get_range() :: [binary()]
   def get_range do
-    generate_range(Saturday.ConfigStorage.get_data(:ruleset))
-    # TODO: somehow includes prev date, research it
-    # |> Filters.filter_date_list_by(:before_today?, positive: false)
+    range = generate_range(Saturday.ConfigStorage.get_data(:ruleset))
     |> Filters.filter_date_list_by(:batch_filters,
       optional: [
         {:sunday?, false},
@@ -168,6 +166,8 @@ defmodule Saturday.Schedule do
       ]
     )
     |> format_range()
+
+    range
   end
 
   def filter_shifted(range, shifted) do
@@ -191,17 +191,6 @@ defmodule Saturday.Schedule do
 
   @interval 15
   @entries_per_hour trunc(60 / @interval)
-
-  @spec generate_range(%RuleSet{}) :: []
-  def generate_range(%RuleSet{} = ruleset) do
-    # generate_range(Timex.set(Timex.local(), hour: 9, minute: 0, second: 0))
-    # from = DateTime.new!(~D[2022-08-01], ~T[08:26:08.003], "Europe/Kiev")
-    # to = DateTime.new!(~D[2022-08-20], ~T[08:26:08.003], "Europe/Kiev")
-    from = ruleset.date_from
-    to = ruleset.date_to
-
-    generate_range_from_to(from, to, ruleset)
-  end
 
   def generate_range_from_to2(%Date{} = from, %Date{} = to, %RuleSet{} = ruleset) do
     from = Timex.to_datetime(from)
@@ -230,8 +219,10 @@ defmodule Saturday.Schedule do
     gen_range_rec(date, from, to, [date | buf])
   end
 
-  @spec generate_range_from_to(%DateTime{}, %DateTime{}, %RuleSet{}) :: []
-  defp generate_range_from_to(from, to, %RuleSet{} = ruleset) do
+  @spec generate_range(%RuleSet{}) :: []
+  defp generate_range(%RuleSet{} = ruleset) do
+    from = ruleset.date_from
+    to = ruleset.date_to
     days_amount = Date.day_of_year(to) - Date.day_of_year(from) - 1
     date_from_time_rule = RuleSet.get_time_rule(ruleset, from)
 
@@ -244,7 +235,7 @@ defmodule Saturday.Schedule do
           |> Timex.shift(days: day)
 
         time_rule = RuleSet.get_time_rule(ruleset, date)
-        hours_amount = time_rule.end_day_at.hour - time_rule.start_day_at.hour
+        hours_amount = time_rule.end_day_at.hour - time_rule.start_day_at.hour - 1
         entries_per_hour = trunc(60 / time_rule.minute_interval)
 
         for hour <- 0..hours_amount do
