@@ -34,12 +34,10 @@ defmodule SaturdayWeb.BookingLive do
     send(self(), {:fetch_entry_range, q})
 
     socket = assign(socket, search_q: q)
-    # {:noreply, start_loading(socket)}
     {:noreply, socket}
   end
 
   def handle_event("apply-to-entry", %{"datetime" => datetime}, socket) do
-    # Queue.apply_to_entry(datetime)
     {:noreply, socket}
   end
 
@@ -141,7 +139,8 @@ defmodule SaturdayWeb.BookingLive do
   end
 
   def handle_info({:entry_deleted, entry}, socket) do
-    # TODO
+    send(self(), :fetch_entry_range)
+
     {:noreply, socket}
   end
 
@@ -163,8 +162,6 @@ defmodule SaturdayWeb.BookingLive do
     ~H"""
     <div
     data-target="create-entry-modal"
-    _phx-click="apply-to-entry"
-    _phx-value-datetime={Schedule.date_to_spec(@date)}
     id={"date-entry-#{@date}"}
     class="is-inline-block js-modal-trigger">
       <button class={"button"}

@@ -13,6 +13,7 @@ defmodule Saturday.Queue do
 
   @impl true
   def init(:ok) do
+    Entries.subscribe()
     existing_entries = Entries.list_entries(:only_dates)
 
     {:ok, %{
@@ -65,6 +66,25 @@ defmodule Saturday.Queue do
 
   @impl true
   def handle_cast(:casting, state) do
+    # * EXAMPLE
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:entry_deleted, {:ok, entry}}, state) do
+    booking_date = entry.booking_date
+
+    state =
+      state
+      |> Map.update!(:applied_entries, fn applied_entries ->
+        Enum.filter(applied_entries, &(&1 != booking_date))
+      end)
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(_, state) do
     {:noreply, state}
   end
 
