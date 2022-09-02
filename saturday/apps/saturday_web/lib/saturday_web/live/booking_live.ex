@@ -163,8 +163,9 @@ defmodule SaturdayWeb.BookingLive do
     <div
     data-target="create-entry-modal"
     id={"date-entry-#{@date}"}
-    class="is-inline-block js-modal-trigger">
-      <button class={"button"}
+    class="m-1"
+    >
+      <button class={"button is-info"}
       ><%= Schedule.format_time(@date) %></button>
     </div>
     """

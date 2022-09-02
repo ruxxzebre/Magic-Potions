@@ -11,8 +11,8 @@
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
-            <label class="title is-size-2 e-font">Фільтр</label>
-            <input class="input is-size-3" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
+            <label class="title is-size-4">Фільтр</label>
+            <input class="input is-size-5" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
           </div>
         </div>
       </form>
@@ -30,15 +30,17 @@
                   <div class="column is-one-third has-text-weight-medium e-font"><%= localized_date %> </div>
                   <div class="column" 
                   >
-                    <%= for date <- range do %>
-                      <%= live_patch render_entry_button(%{date: date}),
-                      to: Routes.booking_path(
-                        @socket, 
-                        :new,
-                        datetime: Schedule.date_to_spec(date)
-                      ) 
-                      %>
-                    <% end %>
+                    <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                      <%= for date <- range do %>
+                        <%= live_patch render_entry_button(%{date: date}),
+                        to: Routes.booking_path(
+                          @socket, 
+                          :new,
+                          datetime: Schedule.date_to_spec(date)
+                        ) 
+                        %>
+                      <% end %>
+                    </div>
                     <%# <div class="box has-background-light has-text-weight-normal">Розгорнути</div> %>
                   </div>
                 </div>
