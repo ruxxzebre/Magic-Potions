@@ -179,9 +179,9 @@ defmodule Saturday.Schedule do
           :range,
           rval.range
           |> Enum.filter(fn inv ->
-            Enum.find(shifted, fn shifted_date ->
+            is_nil(Enum.find(shifted, fn shifted_date ->
               comp_dates(shifted_date, inv.date)
-            end) == nil
+            end))
           end)
         )
 
@@ -209,8 +209,7 @@ defmodule Saturday.Schedule do
     current_date \\ nil,
     buf \\ []
   ) do
-    # alias Saturday.Datum
-    current_date = if current_date == nil, do: from, else: current_date
+    current_date = if is_nil(current_date), do: from, else: current_date
 
     minute_interval = 2
     date = current_date |> Timex.shift(minutes: minute_interval)
