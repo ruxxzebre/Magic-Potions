@@ -1,6 +1,8 @@
 defmodule SaturdayWeb.BookingLive do
   use SaturdayWeb, :live_view
 
+  import SaturdayWeb.Gettext
+
   alias Saturday.Schedule
   alias Saturday.Queue
   alias Saturday.Entries
@@ -11,7 +13,7 @@ defmodule SaturdayWeb.BookingLive do
 
     csrf = Map.get(session, "_csrf_token")
 
-    Logger.info("BOOKING_LIVE: `#{csrf}` is connected.")
+    Logger.info("BOOKING_LIVE: `#{csrf}` is connected. Eligibility: #{Queue.eligible?(csrf)}")
 
     if connected?(socket) do
       Entries.subscribe()
@@ -73,10 +75,23 @@ defmodule SaturdayWeb.BookingLive do
           specked_date = Schedule.date_from_spec(datetime, true)
           ruleset = Saturday.ConfigStorage.get_data(:ruleset)
           valid? = Schedule.RuleSet.validate_date_against_ruleset(ruleset, specked_date)
+          eligible = Queue.eligible?(socket.assigns.csrf)
 
           if valid? do
-            socket
-            |> assign(current_datetime: datetime)
+            if eligible do
+              socket
+              |> assign(current_datetime: datetime)
+            else
+              socket
+              |> put_flash(:error, dgettext("booking", "already-booked-flash"))
+              |> push_patch(
+                to:
+                  Routes.live_path(
+                    socket,
+                    SaturdayWeb.BookingLive
+                  )
+              )
+            end
           else
             socket
             |> push_patch(
@@ -114,6 +129,12 @@ defmodule SaturdayWeb.BookingLive do
             SaturdayWeb.BookingLive
           )
       )
+
+    {:noreply, socket}
+  end
+
+  def handle_info(:successfully_applied_to_entry, socket) do
+    Queue.record_token(socket.assigns.csrf)
 
     {:noreply, socket}
   end

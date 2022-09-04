@@ -56,6 +56,8 @@ defmodule SaturdayWeb.ApplyingFormComponent do
               datetime: datetime,
               datetime_exists: datetime != ""
             )
+            # SENDING TO PARENT (BookingLive in this case)
+            send(self(), :successfully_applied_to_entry)
             socket
         end
     end

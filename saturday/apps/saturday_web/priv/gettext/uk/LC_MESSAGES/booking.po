@@ -1,0 +1,2 @@
+msgid "already-booked-flash"
+msgstr "Ви вже записались до черги! Зачекайте будь-ласка."
