@@ -143,29 +143,16 @@ defmodule Saturday.Schedule.RuleSet do
     minute_interval = time_rule.minute_interval
     entries_per_hour = trunc(60 / minute_interval)
 
-    # must be -1 or 0
-    IO.inspect(date)
-    # IO.inspect("date_from: #{ruleset.date_from}")
-    # IO.inspect("date_to: #{ruleset.date_to}")
     comp_date_from = Timex.compare(ruleset.date_from, date)
-    # must be 1 or 0
     comp_date_to = Timex.compare(ruleset.date_to, date)
-    # IO.puts("comp_date_from: #{comp_date_from}. comp_date_to: #{comp_date_to}")
-    # IO.puts("(comp_date_from == -1 || comp_date_from == 0) #{(comp_date_from == -1 || comp_date_from == 0)}")
-    # IO.puts("(comp_date_to == 1 || comp_date_to == 0) #{(comp_date_to == 1 || comp_date_to == 0)}")
-    # IO.puts("zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i) #{zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i)}")
-    # IO.puts("date.hour >= time_rule.start_day_at.hour #{date.hour >= time_rule.start_day_at.hour}")
-    # IO.puts("date.hour <= time_rule.end_day_at.hour #{date.hour <= time_rule.end_day_at.hour}")
-    # IO.puts("date.minute*date.hour >= time_rule.start_day_at.minute #{date.hour >= time_rule.start_day_at.minute}")
-    # IO.puts("date.minute*date.hour <= time_rule.end_day_at.minute #{date.hour <= time_rule.end_day_at.minute}")
 
     %{start_day_at: start_day_at, end_day_at: end_day_at} = time_rule
 
     (comp_date_from == -1 || comp_date_from == 0) &&
       (comp_date_to == 1 || comp_date_to == 0) &&
-      zero_num(date.minute / minute_interval) in for(i <- 0..entries_per_hour, do: i)
-
-    date.hour >= start_day_at.hour &&
+      Integer.mod(date.minute, minute_interval) == 0 &&
+      date.minute / minute_interval <= entries_per_hour &&
+      date.hour >= start_day_at.hour &&
       date.hour <= end_day_at.hour &&
       date.minute + date.hour * 60 >= start_day_at.minute + start_day_at.hour * 60 &&
       date.minute + date.hour * 60 <= end_day_at.minute + end_day_at.hour * 60
