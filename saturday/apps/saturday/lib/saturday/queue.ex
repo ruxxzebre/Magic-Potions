@@ -17,7 +17,8 @@ defmodule Saturday.Queue do
     existing_entries = Entries.list_entries(:only_dates)
 
     {:ok, %{
-      applied_entries: existing_entries
+      applied_entries: existing_entries,
+      applied_user_tokens: []
     }}
   end
 

@@ -7,13 +7,19 @@ defmodule SaturdayWeb.BookingLive do
   alias Saturday.Schedule.MemStorage
 
   def mount(_params, session, socket) do
-    IO.inspect(session)
+    require Logger
+
+    csrf = Map.get(session, "_csrf_token")
+
+    Logger.info("BOOKING_LIVE: `#{csrf}` is connected.")
+
     if connected?(socket) do
       Entries.subscribe()
       Queue.subscribe()
     end
 
     socket = assign_initials(socket)
+      |> assign(csrf: csrf)
     {:ok, socket}
   end
 
