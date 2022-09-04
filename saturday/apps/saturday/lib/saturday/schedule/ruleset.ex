@@ -63,9 +63,6 @@ defmodule Saturday.Schedule.RuleSet do
             }
 
   def new_default_ruleset() do
-    alias Saturday.Datum
-    alias Saturday.Schedule.RuleSet.TimeRuleSet
-
     rs = %RuleSet{}
 
     date_rules = %{
@@ -121,8 +118,6 @@ defmodule Saturday.Schedule.RuleSet do
   end
 
   defp find_time_rule([head | tail], %DateTime{} = date) do
-    alias Saturday.Datum
-
     cond do
       Datum.comp_pure_dates(date, head.date) ->
         head
@@ -158,11 +153,11 @@ defmodule Saturday.Schedule.RuleSet do
       date.minute + date.hour * 60 <= end_day_at.minute + end_day_at.hour * 60
   end
 
-  def is_zero(number) when is_number(number) do
+  defp is_zero(number) when is_number(number) do
     number == trunc(number)
   end
 
-  def zero_num(number) when is_number(number) do
+  defp zero_num(number) when is_number(number) do
     if is_zero(number) do
       trunc(number)
     else
