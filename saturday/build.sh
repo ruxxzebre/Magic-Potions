@@ -8,7 +8,7 @@ echo "Compiling project..."
 MIX_ENV=prod mix compile
 
 echo "Deploying assets..."
-MIX_ENV=prod mix phx.digest
+mix cmd --app saturday_web mix assets.deploy
 
 echo "Creating release..."
 MIX_ENV=prod mix release --overwrite
