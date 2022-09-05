@@ -17,6 +17,13 @@ defmodule Saturday.Umbrella.MixProject do
             saturday: :permanent,
             saturday_web: :permanent
           ]
+        ],
+        test: [
+          version: version <> "_test",
+          applications: [
+            saturday: :permanent,
+            saturday_web: :permanent
+          ]
         ]
       ]
     ]
