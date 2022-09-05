@@ -19,7 +19,7 @@ defmodule Saturday.Umbrella.MixProject do
           ]
         ],
         test: [
-          version: version <> "_test",
+          version: version <> "_beta",
           applications: [
             saturday: :permanent,
             saturday_web: :permanent
