@@ -23,6 +23,32 @@ defmodule Saturday.Entries do
     Repo.all(Entry)
   end
 
+  @doc """
+  Returns a list of entries matching the given `criteria`.
+
+  Example Criteria:
+
+  [
+   paginate: %{page: 2, per_page: 5},
+   sort: %{sort_by: :item, sort_order: :asc}
+  ]
+  """
+
+  def list_entries(criteria) when is_list(criteria) do
+    query = from(d in Entry)
+
+    Enum.reduce(criteria, query, fn
+      {:paginate, %{page: page, per_page: per_page}}, query ->
+        from q in query,
+          offset: ^((page - 1) * per_page),
+          limit: ^per_page
+
+      {:sort, %{sort_by: sort_by, sort_order: sort_order}}, query ->
+        from q in query, order_by: [{^sort_order, ^sort_by}]
+    end)
+    |> Repo.all()
+  end
+
   def list_entries(:format_fields) do
     Repo.all(Entry)
     |> Enum.map(fn entry ->
