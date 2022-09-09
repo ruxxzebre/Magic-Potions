@@ -77,7 +77,7 @@ defmodule SaturdayWeb.Router do
   scope "/", SaturdayWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    get "/management", ManagementController, :index
+    live "/management", ManagementLive
     get "/management/download_report", ManagementController, :download_report
 
     if Mix.env() not in [:dev, :test] do
