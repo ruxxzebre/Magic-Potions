@@ -2,7 +2,7 @@ defmodule Saturday.Umbrella.MixProject do
   use Mix.Project
 
   def project do
-    version = "1.1.0"
+    version = "1.1.1"
 
     [
       apps_path: "apps",
