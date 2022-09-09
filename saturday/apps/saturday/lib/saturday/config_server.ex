@@ -14,18 +14,16 @@ defmodule Saturday.ConfigStorage do
     :ets.insert(config_table_name(), {:ruleset, data})
   end
 
-  def set_data(key, value) when is_atom(key) do
-    # raise invalid_key_error()
-    :ets.insert(config_table_name(), {key, value})
+  def set_data(_, _) do
+    raise invalid_key_error()
   end
 
   def get_data(:ruleset) do
     Keyword.get(:ets.lookup(config_table_name(), :ruleset), :ruleset, nil)
   end
 
-  def get_data(key) when is_atom(key) do
-    Keyword.get(:ets.lookup(config_table_name(), key), key, nil)
-    # raise invalid_key_error()
+  def get_data(_) do
+    raise invalid_key_error()
   end
 
   def invalid_key_error(), do: "Invalid configuration key."
