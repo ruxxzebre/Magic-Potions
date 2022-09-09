@@ -10,6 +10,11 @@ defmodule Saturday.Entries do
 
   use Saturday.SubBehaviour, topic: inspect(__MODULE__)
 
+  def count_entries do
+    query = from d in Entry, select: count()
+    Repo.one(query)
+  end
+
   @doc """
   Returns the list of entries.
 
@@ -30,7 +35,8 @@ defmodule Saturday.Entries do
 
   [
    paginate: %{page: 2, per_page: 5},
-   sort: %{sort_by: :item, sort_order: :asc}
+   sort: %{sort_by: :item, sort_order: :asc},
+   query: %{find_by: :item, query_string: "Something Jack Jones"}
   ]
   """
 
@@ -45,6 +51,9 @@ defmodule Saturday.Entries do
 
       {:sort, %{sort_by: sort_by, sort_order: sort_order}}, query ->
         from q in query, order_by: [{^sort_order, ^sort_by}]
+
+      {:query, %{find_by: find_by, search_q: search_q}}, query ->
+        from q in query, where: like(field(q, ^find_by), ^"%#{search_q}%")
     end)
     |> Repo.all()
   end
