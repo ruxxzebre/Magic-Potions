@@ -62,7 +62,8 @@ defmodule Saturday.Accounts do
 
   def brut_create_user(attrs \\ %{}) do
     %User{}
-    |> Entry.changeset(attrs)
+    |> User.brut_changeset(attrs)
+    |> User.maybe_hash_password(hash_password: true)
     |> Repo.insert()
   end
 

@@ -120,7 +120,7 @@ defmodule Saturday.Schedule do
     range
     |> Enum.filter(fn {date, %{localized_date: localized_date, date_forms: date_forms}} ->
       Enum.find(date_forms ++ [date, localized_date], fn date ->
-        String.contains?(date, q)
+        String.contains?(String.downcase(date), String.downcase(q))
       end)
     end)
     |> Enum.map(fn {date, %{range: range} = data} ->
@@ -156,16 +156,17 @@ defmodule Saturday.Schedule do
   """
   @spec get_range() :: [binary()]
   def get_range do
-    range = generate_range(Saturday.ConfigStorage.get_data(:ruleset))
-    |> Filters.filter_date_list_by(:batch_filters,
-      optional: [
-        {:sunday?, false},
-        {:before_today?, false},
-        {:between_hours?, false, args: [13, 14]},
-        {:same_as_today?, false}
-      ]
-    )
-    |> format_range()
+    range =
+      generate_range(Saturday.ConfigStorage.get_data(:ruleset))
+      |> Filters.filter_date_list_by(:batch_filters,
+        optional: [
+          {:sunday?, false},
+          {:before_today?, false},
+          {:between_hours?, false, args: [13, 14]},
+          {:same_as_today?, false}
+        ]
+      )
+      |> format_range()
 
     range
   end
@@ -179,9 +180,11 @@ defmodule Saturday.Schedule do
           :range,
           rval.range
           |> Enum.filter(fn inv ->
-            is_nil(Enum.find(shifted, fn shifted_date ->
-              comp_dates(shifted_date, inv.date)
-            end))
+            is_nil(
+              Enum.find(shifted, fn shifted_date ->
+                comp_dates(shifted_date, inv.date)
+              end)
+            )
           end)
         )
 
@@ -203,12 +206,12 @@ defmodule Saturday.Schedule do
   end
 
   defp gen_range_rec(
-    from,
-    to,
-    %RuleSet{} = ruleset,
-    current_date \\ nil,
-    buf \\ []
-  ) do
+         from,
+         to,
+         %RuleSet{} = ruleset,
+         current_date \\ nil,
+         buf \\ []
+       ) do
     current_date = if is_nil(current_date), do: from, else: current_date
 
     minute_interval = 2

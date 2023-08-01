@@ -15,6 +15,13 @@ alias Saturday.Accounts
 alias Saturday.Accounts.User
 # alias Saturday.Entries.Entry
 
+new_user = %{
+  email: "admin@management.com",
+  password: "Flexadmin1@"
+}
+
+Accounts.register_user(new_user)
+
 # range =
 #   Saturday.Schedule.generate_range_new()
 #   |> Enum.map(&(&1.date))

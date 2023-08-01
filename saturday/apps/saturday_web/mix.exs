@@ -65,7 +65,8 @@ defmodule SaturdayWeb.MixProject do
     [
       setup: ["deps.get"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["esbuild default --minify", "phx.digest"],
+      superuser: ["run create_admin_user.exs"]
     ]
   end
 end

@@ -76,7 +76,7 @@ defmodule Saturday.Schedule.RuleSet do
       |> Map.update(:specific, rs.time_rules.specific, fn rules ->
         [
           %TimeRuleSet{
-            date: Datum.new_date(2022, 9, 2),
+            date: Datum.new_date(2023, 12, 23),
             start_day_at: %{
               hour: 9,
               minute: 0
@@ -92,8 +92,8 @@ defmodule Saturday.Schedule.RuleSet do
       end)
 
     rs
-    |> Map.put(:date_from, Datum.new_date(2022, 9, 1, 0, 0))
-    |> Map.put(:date_to, Datum.new_date(2022, 10, 15, 0, 0))
+    |> Map.put(:date_from, Datum.new_date(2023, 7, 20, 0, 0))
+    |> Map.put(:date_to, Datum.new_date(2023, 8, 30, 0, 0))
     |> Map.put(:date_rules, date_rules)
     |> Map.put(:time_rules, time_rules)
   end

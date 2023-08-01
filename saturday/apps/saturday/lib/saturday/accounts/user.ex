@@ -35,6 +35,13 @@ defmodule Saturday.Accounts.User do
     |> validate_password(opts)
   end
 
+  def brut_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:email, :password])
+    |> validate_email()
+    |> validate_password(opts)
+  end
+
   defp validate_email(changeset) do
     changeset
     |> validate_required([:email])
@@ -54,7 +61,9 @@ defmodule Saturday.Accounts.User do
     |> maybe_hash_password(opts)
   end
 
-  defp maybe_hash_password(changeset, opts) do
+  def maybe_hash_password(changeset, opts) do
+    require Logger
+    Logger.debug("maybe_hash_password")
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)
 
