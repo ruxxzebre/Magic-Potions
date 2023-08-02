@@ -8,11 +8,14 @@ defmodule SaturdayWeb.ManagementController do
       {:error, _} ->
         conn
         |> send_resp(500, "Server error.")
+
       {:ok, path} ->
         Task.async(fn -> File.rm!(path) end)
 
         conn
-        |> put_resp_content_type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        |> put_resp_content_type(
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
         |> put_resp_header("Content-Disposition:", "attachment;filename=report.xlsx")
         |> put_root_layout(false)
         |> send_resp(200, File.read!(path))

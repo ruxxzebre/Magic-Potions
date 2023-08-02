@@ -12,7 +12,6 @@ defmodule SaturdayWeb.CoreComponents do
   end
 
   def management_navbar(assigns) do
-
     ~H"""
     <div class="navbar-item">
       <div class="buttons">
@@ -40,8 +39,15 @@ defmodule SaturdayWeb.CoreComponents do
     <nav class="navbar has-background-primary-light">
       <div class="navbar-brand">
         <.navbar_brand brand_src={@brand_src} />
+        <%= if @is_authorized do %>
+          <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        <% end %>
       </div>
-      <div class="navbar-menu">
+      <div class="navbar-menu" id="navMenu">
         <%= if @is_authorized do %>
           <div class="navbar-end">
             <.management_navbar current_path={@current_path} />

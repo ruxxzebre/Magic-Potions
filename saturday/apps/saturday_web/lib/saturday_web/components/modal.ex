@@ -74,7 +74,7 @@ defmodule SaturdayWeb.ModalComponent do
     <div class="modal-background"></div>
     <div class="modal-card">
     <header class="modal-card-head">
-      <p class="modal-card-title">Запис на <br /><%= Schedule.format_date!(@datetime, with_time: true) %></p>
+      <p class="modal-card-title is-flex-shrink-1">Запис на <%= Schedule.format_date!(@datetime, with_time: true) %></p>
       <button class="delete" aria-label="close"></button>
     </header>
       <section class="modal-card-body">

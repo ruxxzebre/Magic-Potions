@@ -29,6 +29,7 @@ import topbar from "../vendor/topbar"
 let Hooks = {};
 
 import {InitModal} from "./initModal.js"
+import "./navbar.js"
 Hooks.InitModal = InitModal
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
