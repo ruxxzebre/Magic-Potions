@@ -9,8 +9,8 @@
 		</tr>
 	</thead>
 	<tbody>
-			<%= for entry <- Enum.reverse(@table_data) do %>
-			<tr>
+			<%= for {entry, idx} <- Enum.with_index(Enum.reverse(@table_data)) do %>
+			<tr phx-hook="transition" id={"#{idx}flex"}>
 				<th>
 					<%= entry.agent_name %>
 				</th>

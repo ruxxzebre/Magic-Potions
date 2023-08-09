@@ -46,7 +46,7 @@
   transition: opacity 1s ease-out;
 }
 
-.phx-loading{
+.phx-loading {
   cursor: wait;
 }
 
@@ -124,4 +124,128 @@
   display: flex;
   width: 100%;
   }
+}
+
+#calendy {
+	/* animation: fade-in 1s */
+}
+
+@keyframes powerUp {
+	0% {
+		/* display: none; */
+		opacity: 0;
+	}
+	100% {
+		display: block;
+		opacity: 1;
+	}
+}
+
+@keyframes fromTheLeft {
+	0% {
+		/* display: none; */
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+	100% {
+		display: block;
+		opacity: 1;
+		transform: translateX(0%);
+	}
+}
+
+@keyframes fromTheUp {
+	0% {
+		/* display: none; */
+		opacity: 0;
+		transform: translateY(-100%);
+	}
+	100% {
+		display: block;
+		opacity: 1;
+		transform: translateY(0%);
+	}
+}
+
+@keyframes fromTheRight {
+	0% {
+		/* display: none; */
+		opacity: 0;
+		transform: translateX(100%);
+	}
+	100% {
+		display: block;
+		opacity: 1;
+		transform: translateX(0%);
+	}
+}
+
+@keyframes realFast {
+	0% {
+		transform: translateX(100%);
+	}
+	100% {
+		display: block;
+	}
+}
+
+.power-up {
+	transition: all;
+	animation: fade-in-scale-keys 3s;
+	animation: fromTheLeft 1s;
+}
+
+.power-sky {
+	animation: fromTheUp 1s;
+}
+
+.power-right {
+	animation: fromTheRight 1s;
+}
+
+@keyframes fromTheLeft {
+	0% {
+		/* display: none; */
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+	100% {
+		display: block;
+		opacity: 1;
+		transform: translateX(0%);
+	}
+}
+
+.power-left {
+	animation: fromTheLeft 1s;
+}
+
+@keyframes shake {
+	0% {
+		transform: translateX(0%);
+	}
+	25% {
+		transform: translateX(-5%);
+	}
+	50% {
+		transform: translateX(5%);
+	}
+	75% {
+		transform: translateX(-5%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
+}
+
+.fast-appear {
+	animation: shake 10s;
+}
+
+.hide-until-mounted {
+	display: none;
+}
+
+.hide-until-mounted:has(div) {
+	display: block;
 }

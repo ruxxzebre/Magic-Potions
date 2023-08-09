@@ -18,6 +18,7 @@ defmodule Saturday.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Saturday.PubSub},
       # Start the Ecto repository
+      Saturday.JobScheduler,
       Saturday.Repo,
       # Start the Queue agent.
       # Should be initialized after Ecto (Saturday.Repo) and PubSUb, 'cause module depends on it

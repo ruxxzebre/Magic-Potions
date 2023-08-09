@@ -44,7 +44,9 @@ defmodule Saturday.MixProject do
       {:swoosh, "~> 1.3"},
       {:timex, "~> 3.7"},
       {:faker, "~> 0.17.0"},
-      {:elixlsx, "~> 0.5.1"}
+      {:elixlsx, "~> 0.5.1"},
+      {:crontab, "~> 1.1"},
+      {:quantum, "~> 3.0"}
     ]
   end
 

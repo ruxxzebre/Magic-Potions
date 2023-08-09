@@ -1,4 +1,5 @@
 defmodule SaturdayWeb.BookingLive do
+  alias ElixirSense.Log
   use SaturdayWeb, :live_view
 
   import SaturdayWeb.Gettext
@@ -7,10 +8,11 @@ defmodule SaturdayWeb.BookingLive do
   alias Saturday.Queue
   alias Saturday.Entries
   alias Saturday.Schedule.MemStorage
+  alias Phoenix.LiveView.JS
+
+  require Logger
 
   def mount(_params, session, socket) do
-    require Logger
-
     csrf = Map.get(session, "_csrf_token")
 
     Logger.info("BOOKING_LIVE: `#{csrf}` is connected. Eligibility: #{Queue.eligible?(csrf)}")
@@ -20,12 +22,16 @@ defmodule SaturdayWeb.BookingLive do
       Queue.subscribe()
     end
 
-    socket = assign_initials(socket)
+    socket =
+      assign_initials(socket)
       |> assign(csrf: csrf)
+
     {:ok, socket}
   end
 
   def assign_initials(socket) do
+    Logger.info("BOOKING_LIVE: Assigning initials...")
+
     send(self(), :fetch_entry_range)
 
     socket
@@ -38,9 +44,38 @@ defmodule SaturdayWeb.BookingLive do
     |> start_loading()
   end
 
+  def handle_event("date-selected", %{"date" => q}, socket) do
+    Logger.info("BOOKING_LIVE: Date selected: #{q}")
+
+    [day, month, year] =
+      q
+      |> String.split("/")
+
+    # date = "#{date[2]}-#{date[0]}-#{date[1]}"
+    date = "#{year}.#{month}.0#{day}"
+
+    Logger.info("BOOKING_LIVE: Date selected2: #{date}")
+
+    send(self(), {:fetch_entry_range, date})
+    socket = assign(socket, search_date: date)
+    {:noreply, socket}
+    # socket =
+    #   socket
+    #   |> assign(current_datetime: q)
+    #   |> push_patch(
+    #     to:
+    #       Routes.live_path(
+    #         socket,
+    #         SaturdayWeb.BookingLive,
+    #         datetime: q
+    #       )
+    #   )
+
+    # {:noreply, socket}
+  end
+
   def handle_event("update-query", %{"search-query" => q}, socket) do
     send(self(), {:fetch_entry_range, q})
-
     socket = assign(socket, search_q: q)
     {:noreply, socket}
   end
@@ -50,17 +85,17 @@ defmodule SaturdayWeb.BookingLive do
   end
 
   def handle_event("close-modal", _, socket) do
+    Logger.info("BOOKING_LIVE: Closing modal")
+
     socket =
-      push_patch(socket,
+      socket
+      |> push_patch(
         to:
           Routes.live_path(
             socket,
             SaturdayWeb.BookingLive
           )
       )
-
-    socket =
-      socket
       |> assign(current_datetime: "")
 
     {:noreply, socket}
@@ -140,6 +175,8 @@ defmodule SaturdayWeb.BookingLive do
   end
 
   def handle_info(:fetch_entry_range, socket) do
+    Logger.info("BOOKING_LIVE: Fetching entry range")
+
     date_range =
       MemStorage.get_range()
       |> Schedule.filter_range("", Queue.applied_entries())
@@ -172,7 +209,6 @@ defmodule SaturdayWeb.BookingLive do
   end
 
   def handle_info(msg, socket) do
-    require Logger
     Logger.warn("Invalid message handled in booking_live: #{inspect(msg)}")
     {:noreply, socket}
   end
@@ -190,7 +226,7 @@ defmodule SaturdayWeb.BookingLive do
     <div
     data-target="create-entry-modal"
     id={"date-entry-#{@date}"}
-    class="m-1"
+    class="m-1 power-sky"
     >
       <button class={"button is-info"}
       ><%= Schedule.format_time(@date) %></button>

@@ -39,6 +39,7 @@ defmodule Saturday.Datum do
 
   def new_date(year, month, day) do
     {:ok, date} = Date.new(year, month, day)
+
     date
     |> Timex.to_datetime(@default_timezone)
     |> Timex.set(
@@ -61,10 +62,18 @@ defmodule Saturday.Datum do
     new_date(date.year, date.month, date.day)
   end
 
+  # def is_passed(d1, d2, hr) do
+  #   Timex.compare(d1, d2, :hours)
+  # end
+
   def comp_pure_dates(d1, d2) do
     cond do
-      d1 == nil -> false
-      d2 == nil -> false
+      d1 == nil ->
+        false
+
+      d2 == nil ->
+        false
+
       true ->
         date = d1
         el = d2

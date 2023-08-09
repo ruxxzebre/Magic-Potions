@@ -1,35 +1,46 @@
 <div class="container">
-  <%= if @live_action == :new do %>
-    <.live_component module={SaturdayWeb.ModalComponent} 
-      id="create-entry-modal"
-      datetime={@current_datetime}
-      datetime_exists={@current_datetime != nil && @current_datetime != ""}
-    />
-  <% end %>
+	<%= if @current_datetime !== "" && @current_datetime !== nil do %>
+		<.live_component module={SaturdayWeb.ModalComponent} 
+			id="create-entry-modal"
+			datetime={@current_datetime}
+			datetime_exists={@current_datetime != nil && @current_datetime != ""}
+		/>
+	<% end %>
   <section>
     <div class="column">
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
-            <label class="title is-size-4 pb-2">Фільтр</label>
-            <input class="input is-size-5" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
+            <div class="title is-size-4 pb-1">Фільтр 
+				<%= @current_datetime %>
+			</div>
+            <div style="display: flex;" class="mb-4 power-up fade-in" id="calendy">
+              <input class="input" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">
+			  <%!-- <div class="hide-until-mounted">
+					<!-- phx-mounted={JS.add_class("fastAppear")} -->
+				<input phx-hook="CalendarItem"
+					-phx-updated={JS.transition("animate-ping", time: 500)}
+				type="date" class="bulmaCalendar" id="datePicker">
+			  </div> --%>
+            </div>
           </div>
         </div>
       </form>
       <div class="card article">
         <div class="card-content">
-          <div class="media">
+          <div class="media" id="mediaboy">
             <%= if @loading do %>
-            <div class="container is-max-widescreen">
+			<div class="media-content has-text-centered" style="height: 100vh !important">
+			</div>
+            <div class="container is-max-widescreen" hidden="1">
               <h2>Завантаження...</h2>
             </div>
             <% else %>
             <div class="media-content has-text-centered">
               <%= for {date, %{range: range, localized_date: localized_date}} <- @date_range do %>
                 <div id={"day-range-#{date}"} class="columns" style="margin-bottom: 45px">
-                  <div class="column is-one-third has-text-weight-medium e-font"><%= localized_date %> </div>
-                  <div class="column" 
-                  >
+                  <div class="column is-one-third has-text-weight-medium e-font power-left"><%= localized_date %> </div>
+                  <div class="column">
                     <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
                       <%= for date <- range do %>
                         <%= live_patch render_entry_button(%{date: date}),

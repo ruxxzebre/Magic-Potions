@@ -41,18 +41,22 @@ defmodule Saturday.Entries do
   end
 
   def list_entries(:only_dates, opts \\ []) do
-    query = from(
-      e in Entry,
-      select: e.booking_date
-    )
+    query =
+      from(
+        e in Entry,
+        select: e.booking_date
+      )
 
     # Map.get(string_to_map(entry.misc), "email", entry.misc)
     list = Repo.all(query)
+
     cond do
       :parse_spec in opts ->
         list
         |> Enum.map(&Saturday.Schedule.date_from_spec/1)
-      true -> list
+
+      true ->
+        list
     end
   end
 
@@ -63,10 +67,14 @@ defmodule Saturday.Entries do
       string
       |> String.split(",")
       |> Enum.map(&String.split(&1, ":"))
-      |> Enum.reduce(%{}, &(Map.put(&2,
-        Enum.at(&1, 0) |> String.trim(),
-        Enum.at(&1, 1) |> String.trim()
-      )))
+      |> Enum.reduce(
+        %{},
+        &Map.put(
+          &2,
+          Enum.at(&1, 0) |> String.trim(),
+          Enum.at(&1, 1) |> String.trim()
+        )
+      )
     end
   end
 
@@ -86,10 +94,12 @@ defmodule Saturday.Entries do
   """
   def get_entry!(id), do: Repo.get!(Entry, id)
 
-  def booked?(date) do
+  def booked?(date) when date != nil do
     q = from e in Entry, where: e.booking_date == ^date
     length(Repo.all(q)) != 0
   end
+
+  def booked?(date), do: false
 
   @doc """
   Creates a entry.

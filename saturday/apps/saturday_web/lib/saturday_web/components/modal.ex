@@ -1,6 +1,8 @@
 defmodule SaturdayWeb.ModalComponent.StateComponents do
   use Phoenix.Component
 
+  alias Saturday.Schedule
+
   def error(assigns) do
     assigns = assign_new(assigns, :hrs_until_expires, fn -> 24 end)
 

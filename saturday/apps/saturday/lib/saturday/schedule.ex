@@ -120,6 +120,8 @@ defmodule Saturday.Schedule do
     range
     |> Enum.filter(fn {date, %{localized_date: localized_date, date_forms: date_forms}} ->
       Enum.find(date_forms ++ [date, localized_date], fn date ->
+        # require Logger
+        # Logger.debug("Comparing #{date} with #{q}")
         String.contains?(String.downcase(date), String.downcase(q))
       end)
     end)

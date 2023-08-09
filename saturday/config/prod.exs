@@ -1,5 +1,17 @@
 import Config
 
+def parse_origin_urls() do
+  origin_urls = System.get_env("ORIGIN_URL")
+
+  if origin_urls == nil do
+    raise "Please specify ORIGIN_URL"
+  end
+
+  origin_urls
+  |> String.split(",")
+  |> Enum.map(fn url -> String.trim(url) end)
+end
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
@@ -11,9 +23,10 @@ import Config
 # before starting your production server.
 config :saturday_web, SaturdayWeb.Endpoint,
   url: [
-    host: (System.get_env("HOST_URL") || raise "Please specify HOST_URL"),
+    host: System.get_env("HOST_URL") || raise("Please specify HOST_URL"),
     port: 80
   ],
+  check_origin: parse_origin_urls() || raise("Please specify ORIGIN_URL"),
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # url: [host: "example.com", port: 80],

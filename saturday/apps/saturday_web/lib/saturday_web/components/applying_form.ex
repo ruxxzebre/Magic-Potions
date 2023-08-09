@@ -4,20 +4,23 @@ defmodule SaturdayWeb.ApplyingFormComponent do
   alias Saturday.Queue
 
   def mount(socket) do
-    socket = assign(socket,
-      name: "",
-      email: "",
-      phone: ""
-    )
+    socket =
+      assign(socket,
+        name: "",
+        email: "",
+        phone: ""
+      )
+
     {:ok, socket}
   end
 
   def handle_event("update-form", %{"email" => email, "phone" => phone, "name" => name}, socket) do
-    socket = assign(socket,
-      email: email,
-      name: name,
-      phone: phone
-    )
+    socket =
+      assign(socket,
+        email: email,
+        name: name,
+        phone: phone
+      )
 
     {:noreply, socket}
   end
@@ -28,39 +31,48 @@ defmodule SaturdayWeb.ApplyingFormComponent do
     phone = socket.assigns.phone
     datetime = socket.assigns.datetime
 
-    socket = cond do
-      Queue.booked?(datetime) ->
-        send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
-          state: :already_booked_error,
-          datetime: datetime,
-          datetime_exists: datetime != ""
-        )
-        socket
-      true ->
-        case Queue.apply_to_entry(%{
-          agent_name: name,
-          agent_phone: phone,
-          booking_date: datetime,
-          misc: "email: #{email}"
-        }) do
-          {:error} ->
-            send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
-              state: :error,
-              datetime: datetime,
-              datetime_exists: datetime != ""
-            )
-            socket
-          {:ok} ->
-            send_update(SaturdayWeb.ModalComponent, id: "create-entry-modal",
-              state: :success,
-              datetime: datetime,
-              datetime_exists: datetime != ""
-            )
-            # SENDING TO PARENT (BookingLive in this case)
-            send(self(), :successfully_applied_to_entry)
-            socket
-        end
-    end
+    socket =
+      cond do
+        Queue.booked?(datetime) ->
+          send_update(SaturdayWeb.ModalComponent,
+            id: "create-entry-modal",
+            state: :already_booked_error,
+            datetime: datetime,
+            datetime_exists: datetime != ""
+          )
+
+          socket
+
+        true ->
+          case Queue.apply_to_entry(%{
+                 agent_name: name,
+                 agent_phone: phone,
+                 booking_date: datetime,
+                 misc: "email: #{email}"
+               }) do
+            {:error} ->
+              send_update(SaturdayWeb.ModalComponent,
+                id: "create-entry-modal",
+                state: :error,
+                datetime: datetime,
+                datetime_exists: datetime != ""
+              )
+
+              socket
+
+            {:ok} ->
+              send_update(SaturdayWeb.ModalComponent,
+                id: "create-entry-modal",
+                state: :success,
+                datetime: datetime,
+                datetime_exists: datetime != ""
+              )
+
+              # SENDING TO PARENT (BookingLive in this case)
+              send(self(), :successfully_applied_to_entry)
+              socket
+          end
+      end
 
     {:noreply, socket}
   end
@@ -69,9 +81,9 @@ defmodule SaturdayWeb.ApplyingFormComponent do
     ~H"""
     <div>
       <form
-      phx-change="update-form"
-      phx-submit="submit-form"
-      phx-target={@myself}
+        phx-change="update-form"
+        phx-submit="submit-form"
+        phx-target={@myself}
       >
       <div class="field">
         <label class="label">ПІБ</label>
