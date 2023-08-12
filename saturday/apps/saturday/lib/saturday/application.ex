@@ -23,6 +23,7 @@ defmodule Saturday.Application do
       # Start the Queue agent.
       # Should be initialized after Ecto (Saturday.Repo) and PubSUb, 'cause module depends on it
       Saturday.Queue,
+      Saturday.TokenLimiting,
       Saturday.Schedule.MemStorage
       # Start a worker by calling: Saturday.Worker.start_link(arg)
       # {Saturday.Worker, arg}

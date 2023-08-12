@@ -39,9 +39,33 @@ defmodule SaturdayWeb.BookingLive do
       search_q: "",
       date_range: [],
       temporary_assigns: [date_range: []],
-      current_datetime: nil
+      current_datetime: nil,
+      show_cs_modal: false
     )
     |> start_loading()
+  end
+
+  def handle_event("show-cs-modal", _, socket) do
+    socket =
+      if Saturday.TokenLimiting.eligible?(socket.assigns.csrf, "check-submission") === false do
+        socket
+        |> put_flash(:error, "Ви вичерпали ліміт запитів. Спробуйте пізніше.")
+      else
+        assign(socket,
+          show_cs_modal: true
+        )
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("close-cs-modal", _, socket) do
+    socket =
+      assign(socket,
+        show_cs_modal: false
+      )
+
+    {:noreply, socket}
   end
 
   def handle_event("date-selected", %{"date" => q}, socket) do
@@ -165,6 +189,11 @@ defmodule SaturdayWeb.BookingLive do
           )
       )
 
+    {:noreply, socket}
+  end
+
+  def handle_info({:record_token, resource}, socket) do
+    Saturday.TokenLimiting.record_token(socket.assigns.csrf, resource)
     {:noreply, socket}
   end
 

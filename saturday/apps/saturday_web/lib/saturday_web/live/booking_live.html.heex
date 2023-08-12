@@ -7,12 +7,23 @@
 		/>
 	<% end %>
   <section>
+	<%= if @show_cs_modal do %>
+  		<.live_component module={SaturdayWeb.CSModalComponent} 
+			id="cs1-modal"
+		/>
+	<% end %>
     <div class="column">
       <form phx-change="update-query" phx-debounce="150">
         <div class="field">
           <div class="control">
-            <div class="title is-size-4 pb-1">Фільтр 
+            <div class="title is-size-4 pb-1 is-flex is-flex-direction-row is-justify-content-space-between">
+				<div>
+				Фільтр 
 				<%= @current_datetime %>
+				</div>
+				<div>
+					<button type="button" phx-click="show-cs-modal" class="button is-warning">Перевірити свій запис</button>
+				</div>
 			</div>
             <div style="display: flex;" class="mb-4 power-up fade-in" id="calendy">
               <input class="input" name="search-query" value={@search_q} type="text" placeholder="Пошук по даті">

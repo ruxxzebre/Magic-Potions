@@ -29,11 +29,13 @@ import topbar from "../vendor/topbar";
 let Hooks = {};
 
 import { InitModal } from "./initModal.js";
+import { InitCSModal } from "./initCSModal";
 import { CalendarItem } from "./CalendarItem.js";
 import "./navbar.js";
 import "./calendar.js";
 import { transition } from "./transition";
 Hooks.InitModal = InitModal;
+Hooks.InitCSModal = InitCSModal;
 Hooks.CalendarItem = CalendarItem;
 Hooks.transition = transition;
 
