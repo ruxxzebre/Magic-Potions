@@ -17,7 +17,7 @@ config :marshall, Marshall.Repo,
 # you can enable the server option below.
 config :marshall, MarshallWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "8CLgRmWVh/YcjfQOym8L9EjJyRShqT8BbOaU+6J4toBlhgoL9kNWRh5xv1tfolVu",
+  secret_key_base: "Dz4/HnrTtl5nIFE2cksVa+H3Km+w9K/yrOqtYNSb8ywVovCDFtDZnvpmkcAe1cJY",
   server: false
 
 # In test we don't send emails.

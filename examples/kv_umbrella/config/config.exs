@@ -17,7 +17,7 @@ import Config
 #       metadata: [:user_id]
 #
 
-computer_name = "Rootnecks-MacBook-Pro"
+computer_name = System.get_env("COMPUTER_NAME") || "localhost"
 
 config :kv,
   routing_table: [

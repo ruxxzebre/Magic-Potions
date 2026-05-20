@@ -6,3 +6,21 @@
 */**/_build/
 */**/deps/
 */**/tmp/
+
+# Secrets / local env
+.env
+.env.*
+
+# Local databases & dumps
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.dump
+erl_crash.dump
+
+# Logs
+*.log
+
+# Release artifacts
+*.tar.gz

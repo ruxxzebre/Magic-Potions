@@ -4,7 +4,7 @@ import Config
 # you can enable the server option below.
 config :tierlist, TierlistWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "Dz/Oh4lGTw4q8DQTPm9fXSaK6l9xtE9tOjcuyBgeOUZZL/blgzMCZEuWv/SZyLeS",
+  secret_key_base: "e+MU+VTfOKYXTSvF+ttYo640BPdw7CLQssn+95WDc5ulmd/GQNM7D77gujJdzRLm",
   server: false
 
 # Print only warnings and errors during test

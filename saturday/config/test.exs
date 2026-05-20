@@ -17,7 +17,7 @@ config :saturday, Saturday.Repo,
 # you can enable the server option below.
 config :saturday_web, SaturdayWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "6oYg2M31s4d0VKCrb8XokdEMJHzek18WmDXij7eZRrIgBI6fd+cCmvPVTS5Dr6Jc",
+  secret_key_base: "UBsSUBA+Mpqadr2vqEpdRgAfw0mC0hJoyW2/8F1RA8ObhgkIqcf5MEwPHqiJZwlr",
   server: false
 
 # Print only warnings and errors during test

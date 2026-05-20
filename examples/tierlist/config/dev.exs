@@ -13,7 +13,7 @@ config :tierlist, TierlistWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "bk+GWWfkk41iguHcMVscCT49IvZoxQ9MjntNWhSKi5XVeGfnRIbtAkPSCIq67Kdi",
+  secret_key_base: "RtBbExUGQMNzdST7kwhOIgpJDZJdAwqnngUwXXUSGUcP2ehdAXG2isAK3NRJ9Ljt",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}

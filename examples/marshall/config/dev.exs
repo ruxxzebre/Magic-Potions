@@ -23,7 +23,7 @@ config :marshall, MarshallWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "8M4vRSpjozQVZlvN86SznOjKQsaG26adDB1DHsNgsYr5duM0BecFD/tlGEg/pOvw",
+  secret_key_base: "0I/n0LMp9EnyWcj3DTWM81WmSj/EjhG9VPGQiKl9GmuzK2ktDn8SMCayyEh+C3Gk",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}

@@ -20,7 +20,7 @@ config :saturday_web, SaturdayWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "kB+NXASZlKVTqrlL+QQdJ4URrn9Z+yi4YU/hfBIA2dozAZs9gLKUysmAws5uju3i",
+  secret_key_base: "MeQdNAXLsIdv+q+gnxrUoEbj+wcwoUc5nJ0MpcM/+8lZjxzhrwW1X3n6sarwgJf2",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
