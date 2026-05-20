@@ -31,7 +31,11 @@ The application-scheduling system. A few notable bits:
 - Pagination on the management table (the last feature before things wound down).
 - Deployed as a `mix release` to a small VPS behind nginx — scripts live in `saturday/deploy/`.
 
-Nothing in here is actively maintained — it's preserved for context, not for production use today.
+It kept running through roughly three admissions seasons (August–September **2022, 2023, and 2024**)
+without any real maintenance in between — the 2022 build was already good enough that it just
+quietly did its job every year until the university stopped using it.
+
+Nothing in here is actively maintained today — it's preserved for context, not for production use.
 
 ## Status
 
